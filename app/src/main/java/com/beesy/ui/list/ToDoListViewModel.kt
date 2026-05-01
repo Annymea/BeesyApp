@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.UUID
 
 class ToDoListViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ListUiState())
@@ -12,17 +13,32 @@ class ToDoListViewModel : ViewModel() {
 
     fun onCheckboxChange(toggleElement: ListElement) {
         _uiState.update { currentState ->
-            val indexToggleElement = currentState.shownList.indexOf(toggleElement)
-
             currentState.copy(
                 shownList =
-                    currentState.shownList.mapIndexed { index, element ->
-                        if (index == indexToggleElement) {
-                            element.copy(checked = !element.checked)
+                    currentState.shownList.map {
+                        if (it.id == toggleElement.id) {
+                            it.copy(checked = !it.checked)
                         } else {
-                            element
+                            it
                         }
                     },
+            )
+        }
+    }
+
+    fun addItem(newItem: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                shownList =
+                    currentState.shownList +
+                        ListElement(
+                            title =
+                                newItem.ifBlank {
+                                    "Neue Aufgabe"
+                                },
+                            checked = false,
+                            id = UUID.randomUUID(),
+                        ),
             )
         }
     }
