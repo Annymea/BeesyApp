@@ -11,12 +11,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -52,13 +54,11 @@ fun ToDoScreen(
         modifier = modifier.fillMaxSize(),
         topBar = { AppBar() },
         floatingActionButton = {
-            if (!adding) {
-                AddItem(
-                    onClickAdd = {
-                        adding = true
-                    },
-                )
-            }
+            AddItem(
+                onClickAdd = {
+                    adding = true
+                },
+            )
         },
         floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
@@ -70,6 +70,7 @@ fun ToDoScreen(
                 adding = false
                 listViewModel.addItem(it)
             },
+            onDeleteClicked = { listViewModel.deleteItem(it) },
             adding = adding,
         )
     }
@@ -96,6 +97,7 @@ fun AppBar(modifier: Modifier = Modifier) {
 @Composable
 fun ToDoList(
     onCheckboxClicked: (ListElement) -> (Unit),
+    onDeleteClicked: (ListElement) -> (Unit),
     onConfirmAdding: (String) -> (Unit),
     adding: Boolean,
     modifier: Modifier = Modifier,
@@ -112,15 +114,18 @@ fun ToDoList(
                     .weight(1f),
         ) {
             items(list) { item ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                TaskListElement(
+                    listElement = item,
+                    onCheckboxClicked = { onCheckboxClicked(it) },
+                    onDeleteClicked = { onDeleteClicked(it) },
                 )
-                {
-                    Checkbox(
-                        checked = item.checked,
-                        onCheckedChange = { onCheckboxClicked(item) },
+            }
+            item {
+                if (adding) {
+                    InputForNewItem(
+                        onConfirmAdding = { onConfirmAdding(it) },
+                        modifier = Modifier.padding(16.dp),
                     )
-                    Text(text = item.title)
                 }
             }
         }
@@ -129,10 +134,36 @@ fun ToDoList(
         LaunchedEffect(adding) {
             listState.animateScrollToItem(list.size)
         }
-        if (adding) {
-            InputForNewItem(
-                onConfirmAdding = { onConfirmAdding(it) },
-                modifier = Modifier.padding(16.dp),
+    }
+}
+
+@Composable
+fun TaskListElement(
+    listElement: ListElement,
+    onCheckboxClicked: (ListElement) -> Unit,
+    onDeleteClicked: (ListElement) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    )
+    {
+        Checkbox(
+            checked = listElement.checked,
+            onCheckedChange = { onCheckboxClicked(listElement) },
+        )
+        Text(
+            modifier = Modifier.weight(1f),
+            text = listElement.title,
+        )
+        IconButton(
+            onClick = { onDeleteClicked(listElement) },
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Clear,
+                contentDescription = "Delete Task",
+                tint = MaterialTheme.colorScheme.error,
             )
         }
     }

@@ -42,4 +42,12 @@ class ToDoListViewModel : ViewModel() {
             )
         }
     }
+
+    fun deleteItem(deleteItem: ListElement) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                shownList = currentState.shownList - deleteItem,
+            )
+        }
+    }
 }
