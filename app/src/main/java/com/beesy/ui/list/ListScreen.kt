@@ -1,8 +1,10 @@
 package com.beesy.ui.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +28,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -165,7 +166,17 @@ fun TaskListElement(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier =
+            modifier
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 4.dp,
+                    bottom = 4.dp,
+                ).background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(8.dp),
+                ),
         verticalAlignment = Alignment.CenterVertically,
     )
     {
@@ -211,23 +222,30 @@ fun InputForNewItem(
     var state by rememberSaveable { mutableStateOf("") }
 
     Row(
-        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Max),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
-            shape = RoundedCornerShape(
-                topStart = 8.dp,
-                bottomStart = 8.dp),
+            shape =
+                RoundedCornerShape(
+                    topStart = 8.dp,
+                    bottomStart = 8.dp,
+                ),
             colors =
                 TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 ),
             modifier =
                 Modifier
                     .weight(1f)
-                    .focusRequester(addTaskKeyboardFocus)                    ,//.height(36.dp),
+                    .focusRequester(addTaskKeyboardFocus),
             value = state,
             onValueChange = { state = it },
             singleLine = true,
@@ -247,28 +265,24 @@ fun InputForNewItem(
                 KeyboardActions(
                     onDone = { onConfirmAdding(state) },
                 ),
-            suffix = {
-
-            }
+            trailingIcon = {
+            },
         )
         FilledIconButton(
-            modifier = Modifier
-                //.padding(start = 8.dp)
-                .fillMaxHeight(),
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f),
             onClick = { onConfirmAdding(state) },
-            shape = RoundedCornerShape(
-                topEnd = 8.dp,
-                bottomEnd = 8.dp
-            ),
-            colors =
-                IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+            shape =
+                RoundedCornerShape(
+                    topEnd = 8.dp,
+                    bottomEnd = 8.dp,
                 ),
         ) {
             Icon(
                 imageVector = Icons.Filled.Check,
                 contentDescription = "create list item",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
     }
@@ -284,11 +298,11 @@ fun ScreenPreview() {
 
 @Preview
 @Composable
-fun InputPreview(){
-    MyApplicationTheme{
+fun InputPreview() {
+    MyApplicationTheme {
         InputForNewItem(
             onConfirmAdding = {},
-            addTaskKeyboardFocus = remember { FocusRequester() }
+            addTaskKeyboardFocus = remember { FocusRequester() },
         )
     }
 }
