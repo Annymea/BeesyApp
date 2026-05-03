@@ -8,10 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -19,10 +23,12 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -35,7 +41,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,16 +59,19 @@ fun ToDoScreen(
 ) {
     val uiState by listViewModel.uiState.collectAsState()
     var adding by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = { AppBar() },
         floatingActionButton = {
-            AddItem(
-                onClickAdd = {
-                    adding = true
-                },
-            )
+            if (!adding) {
+                AddItem(
+                    onClickAdd = {
+                        adding = true
+                    },
+                )
+            }
         },
         floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
@@ -72,6 +85,7 @@ fun ToDoScreen(
             },
             onDeleteClicked = { listViewModel.deleteItem(it) },
             adding = adding,
+            addTaskKeyboardFocus = focusRequester,
         )
     }
 }
@@ -99,6 +113,7 @@ fun ToDoList(
     onCheckboxClicked: (ListElement) -> (Unit),
     onDeleteClicked: (ListElement) -> (Unit),
     onConfirmAdding: (String) -> (Unit),
+    addTaskKeyboardFocus: FocusRequester,
     adding: Boolean,
     modifier: Modifier = Modifier,
     list: List<ListElement>,
@@ -125,6 +140,7 @@ fun ToDoList(
                     InputForNewItem(
                         onConfirmAdding = { onConfirmAdding(it) },
                         modifier = Modifier.padding(16.dp),
+                        addTaskKeyboardFocus = addTaskKeyboardFocus,
                     )
                 }
             }
@@ -133,6 +149,7 @@ fun ToDoList(
         // only starts this, when adding an item
         LaunchedEffect(adding) {
             listState.animateScrollToItem(list.size)
+            addTaskKeyboardFocus.requestFocus()
         }
     }
 }
@@ -185,6 +202,7 @@ fun AddItem(
 @Composable
 fun InputForNewItem(
     onConfirmAdding: (String) -> (Unit),
+    addTaskKeyboardFocus: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
     var state by rememberSaveable { mutableStateOf("") }
@@ -194,21 +212,47 @@ fun InputForNewItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
-            label = {
-                Text(text = "neue Aufgabe")
-            },
-            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(8.dp),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
+            modifier = Modifier.weight(1f).focusRequester(addTaskKeyboardFocus),
             value = state,
             onValueChange = { state = it },
             singleLine = true,
+            placeholder = {
+                Text(text = "Neue Aufgabe")
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Create,
+                    contentDescription = "Neue Aufgabe eingeben",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            },
+            keyboardOptions =
+                KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions =
+                KeyboardActions(
+                    onDone = { onConfirmAdding(state) },
+                ),
         )
         FilledIconButton(
             modifier = Modifier.padding(start = 8.dp),
             onClick = { onConfirmAdding(state) },
+            shape = RoundedCornerShape(12.dp),
+            colors =
+                IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
         ) {
             Icon(
                 imageVector = Icons.Filled.Check,
                 contentDescription = "create list item",
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
     }
