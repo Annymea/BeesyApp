@@ -1,9 +1,12 @@
 package com.beesy.ui.list
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -208,18 +211,23 @@ fun InputForNewItem(
     var state by rememberSaveable { mutableStateOf("") }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Max),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(
+                topStart = 8.dp,
+                bottomStart = 8.dp),
             colors =
                 TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
                 ),
-            modifier = Modifier.weight(1f).focusRequester(addTaskKeyboardFocus),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .focusRequester(addTaskKeyboardFocus)                    ,//.height(36.dp),
             value = state,
             onValueChange = { state = it },
             singleLine = true,
@@ -229,7 +237,7 @@ fun InputForNewItem(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Create,
-                    contentDescription = "Neue Aufgabe eingeben",
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
@@ -239,11 +247,19 @@ fun InputForNewItem(
                 KeyboardActions(
                     onDone = { onConfirmAdding(state) },
                 ),
+            suffix = {
+
+            }
         )
         FilledIconButton(
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier
+                //.padding(start = 8.dp)
+                .fillMaxHeight(),
             onClick = { onConfirmAdding(state) },
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(
+                topEnd = 8.dp,
+                bottomEnd = 8.dp
+            ),
             colors =
                 IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -263,5 +279,16 @@ fun InputForNewItem(
 fun ScreenPreview() {
     MyApplicationTheme {
         ToDoScreen()
+    }
+}
+
+@Preview
+@Composable
+fun InputPreview(){
+    MyApplicationTheme{
+        InputForNewItem(
+            onConfirmAdding = {},
+            addTaskKeyboardFocus = remember { FocusRequester() }
+        )
     }
 }
