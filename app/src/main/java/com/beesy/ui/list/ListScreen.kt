@@ -1,5 +1,6 @@
 package com.beesy.ui.list
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -92,6 +95,8 @@ fun ToDoScreen(
             onDeleteClicked = { listViewModel.deleteItem(it) },
             adding = adding,
             addTaskKeyboardFocus = focusRequester,
+            addingValue = uiState.addedWord,
+            onAddingValueChange = { "Test" }, // TODO: Hier Methode zum wechseln aufrufen
         )
     }
 }
@@ -118,7 +123,12 @@ fun AppBar(modifier: Modifier = Modifier) {
 fun ToDoList(
     onCheckboxClicked: (ListElement) -> (Unit),
     onDeleteClicked: (ListElement) -> (Unit),
+    onEditClicked: (ListElement) -> (Unit),
+    onFinishEditClicked: (ListElement, String) -> Unit,
     onConfirmAdding: (String) -> (Unit),
+    onAddingValueChange: (String) -> (Unit),
+    editedItem: ListElement,
+    addingValue: String,
     addTaskKeyboardFocus: FocusRequester,
     adding: Boolean,
     list: List<ListElement>,
@@ -139,7 +149,10 @@ fun ToDoList(
                     listElement = item,
                     onCheckboxClicked = { onCheckboxClicked(it) },
                     onDeleteClicked = { onDeleteClicked(it) },
-                    onEditClicked = {},
+                    onEditClicked = { onEditClicked(it) },
+                    onFinishEditClicked = onFinishEditClicked,
+                    edit = editedItem.id == item.id,
+                    focusRequester = addTaskKeyboardFocus,
                 )
             }
             item {
@@ -148,6 +161,8 @@ fun ToDoList(
                         onConfirmAdding = { onConfirmAdding(it) },
                         modifier = Modifier.padding(16.dp),
                         addTaskKeyboardFocus = addTaskKeyboardFocus,
+                        onValueChange = onAddingValueChange,
+                        value = addingValue,
                     )
                 }
             }
@@ -163,15 +178,19 @@ fun ToDoList(
 
 @Composable
 fun TaskListElement(
+    // TODO: Ich brauche noch einen Cancel Button für das editieren
+    // value: String,
+    edit: Boolean,
+    // onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
     listElement: ListElement,
     onCheckboxClicked: (ListElement) -> Unit,
     onDeleteClicked: (ListElement) -> Unit,
     onEditClicked: (ListElement) -> Unit,
+    onFinishEditClicked: (ListElement, String) -> (Unit),
     modifier: Modifier = Modifier,
 ) {
-    var state by rememberSaveable { mutableStateOf(listElement.title) }
-    var edit by rememberSaveable { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
+    var value by rememberSaveable { mutableStateOf(listElement.title) }
 
     LaunchedEffect(edit) {
         focusRequester.requestFocus()
@@ -195,26 +214,31 @@ fun TaskListElement(
     {
         if (edit) {
             BasicTextField(
-                textStyle = MaterialTheme.typography.bodyLarge,
+                // = TextFieldDefaults.te,
+                textStyle =
+                    MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 modifier =
                     Modifier
                         .weight(1f)
                         .padding(16.dp)
                         .focusRequester(focusRequester),
-                value = state,
-                onValueChange = { state = it },
+                // Ich kann hier nicht einfach sagen, dass ich den Title nehme,
+                // weil ich den ja noch abbrechen will den Vorgang
+                value = value,
+                onValueChange = { value = it },
                 keyboardOptions =
                     KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions =
                     KeyboardActions(
-                        onDone = { edit = false },
+                        onDone = { onFinishEditClicked(listElement, value) },
                     ),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
             )
             Icon(
                 modifier =
                     Modifier
                         .clickable(
-                            onClick = { edit = false },
+                            onClick = { },
                         ).padding(8.dp),
                 imageVector = Icons.Filled.Check,
                 contentDescription = "Finish editing task",
@@ -237,7 +261,6 @@ fun TaskListElement(
                     modifier =
                         Modifier.clickable(
                             onClick = {
-                                edit = true
                                 onEditClicked(listElement)
                             },
                         ),
@@ -274,12 +297,12 @@ fun AddItem(
 
 @Composable
 fun InputForNewItem(
+    value: String,
+    onValueChange: (String) -> (Unit),
     onConfirmAdding: (String) -> (Unit),
     addTaskKeyboardFocus: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
-    var state by rememberSaveable { mutableStateOf("") }
-
     Row(
         modifier =
             modifier
@@ -305,8 +328,8 @@ fun InputForNewItem(
                 Modifier
                     .weight(1f)
                     .focusRequester(addTaskKeyboardFocus),
-            value = state,
-            onValueChange = { state = it },
+            value = value,
+            onValueChange = { onValueChange(it) },
             singleLine = true,
             placeholder = {
                 Text(text = "Neue Aufgabe")
@@ -322,7 +345,7 @@ fun InputForNewItem(
                 KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions =
                 KeyboardActions(
-                    onDone = { onConfirmAdding(state) },
+                    onDone = { onConfirmAdding(value) },
                 ),
             trailingIcon = {
             },
@@ -332,7 +355,7 @@ fun InputForNewItem(
                 Modifier
                     .fillMaxHeight()
                     .aspectRatio(1f),
-            onClick = { onConfirmAdding(state) },
+            onClick = { onConfirmAdding(value) },
             shape =
                 RoundedCornerShape(
                     topEnd = 8.dp,
@@ -347,7 +370,7 @@ fun InputForNewItem(
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ScreenPreview() {
     MyApplicationTheme {
@@ -362,6 +385,8 @@ fun InputPreview() {
         InputForNewItem(
             onConfirmAdding = {},
             addTaskKeyboardFocus = remember { FocusRequester() },
+            value = "Test",
+            onValueChange = { "Test" },
         )
     }
 }
