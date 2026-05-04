@@ -1,6 +1,7 @@
 package com.beesy.ui.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -21,13 +23,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -119,8 +121,8 @@ fun ToDoList(
     onConfirmAdding: (String) -> (Unit),
     addTaskKeyboardFocus: FocusRequester,
     adding: Boolean,
-    modifier: Modifier = Modifier,
     list: List<ListElement>,
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
 
@@ -137,6 +139,7 @@ fun ToDoList(
                     listElement = item,
                     onCheckboxClicked = { onCheckboxClicked(it) },
                     onDeleteClicked = { onDeleteClicked(it) },
+                    onEditClicked = {},
                 )
             }
             item {
@@ -163,39 +166,95 @@ fun TaskListElement(
     listElement: ListElement,
     onCheckboxClicked: (ListElement) -> Unit,
     onDeleteClicked: (ListElement) -> Unit,
+    onEditClicked: (ListElement) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var state by rememberSaveable { mutableStateOf(listElement.title) }
+    var edit by rememberSaveable { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(edit) {
+        focusRequester.requestFocus()
+    }
+
     Row(
         modifier =
             modifier
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
-                    top = 4.dp,
-                    bottom = 4.dp,
+                    top = 8.dp,
+                    // bottom = 4.dp
                 ).background(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(8.dp),
                 ),
+        // .height(IntrinsicSize.Max),
         verticalAlignment = Alignment.CenterVertically,
     )
     {
-        Checkbox(
-            checked = listElement.checked,
-            onCheckedChange = { onCheckboxClicked(listElement) },
-        )
-        Text(
-            modifier = Modifier.weight(1f),
-            text = listElement.title,
-        )
-        IconButton(
-            onClick = { onDeleteClicked(listElement) },
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Clear,
-                contentDescription = "Delete Task",
-                tint = MaterialTheme.colorScheme.error,
+        if (edit) {
+            BasicTextField(
+                textStyle = MaterialTheme.typography.bodyLarge,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(16.dp)
+                        .focusRequester(focusRequester),
+                value = state,
+                onValueChange = { state = it },
+                keyboardOptions =
+                    KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = { edit = false },
+                    ),
             )
+            Icon(
+                modifier =
+                    Modifier
+                        .clickable(
+                            onClick = { edit = false },
+                        ).padding(8.dp),
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Finish editing task",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (!edit) {
+            Checkbox(
+                checked = listElement.checked,
+                onCheckedChange = { onCheckboxClicked(listElement) },
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = listElement.title,
+            )
+            Row(
+                modifier = Modifier.padding(8.dp),
+            ) {
+                Icon(
+                    modifier =
+                        Modifier.clickable(
+                            onClick = {
+                                edit = true
+                                onEditClicked(listElement)
+                            },
+                        ),
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Edit Task",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Icon(
+                    modifier =
+                        Modifier.clickable(
+                            onClick = { onDeleteClicked(listElement) },
+                        ),
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = "Delete Task",
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            }
         }
     }
 }
