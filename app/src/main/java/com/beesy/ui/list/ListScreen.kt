@@ -53,7 +53,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -95,8 +94,11 @@ fun ToDoScreen(
             onDeleteClicked = { listViewModel.deleteItem(it) },
             adding = adding,
             addTaskKeyboardFocus = focusRequester,
-            addingValue = uiState.addedWord,
-            onAddingValueChange = { "Test" }, // TODO: Hier Methode zum wechseln aufrufen
+            onFinishEditClicked = { item, name ->
+                listViewModel.updateListItem(item, name)
+            },
+            onEditClicked = { listViewModel.startEditingItem(it) },
+            editedItem = uiState.editing,
         )
     }
 }
@@ -126,9 +128,7 @@ fun ToDoList(
     onEditClicked: (ListElement) -> (Unit),
     onFinishEditClicked: (ListElement, String) -> Unit,
     onConfirmAdding: (String) -> (Unit),
-    onAddingValueChange: (String) -> (Unit),
-    editedItem: ListElement,
-    addingValue: String,
+    editedItem: ListElement?,
     addTaskKeyboardFocus: FocusRequester,
     adding: Boolean,
     list: List<ListElement>,
@@ -150,8 +150,10 @@ fun ToDoList(
                     onCheckboxClicked = { onCheckboxClicked(it) },
                     onDeleteClicked = { onDeleteClicked(it) },
                     onEditClicked = { onEditClicked(it) },
-                    onFinishEditClicked = onFinishEditClicked,
-                    edit = editedItem.id == item.id,
+                    onFinishEditClicked = { item, name ->
+                        onFinishEditClicked(item, name)
+                    },
+                    edit = editedItem?.id == item.id,
                     focusRequester = addTaskKeyboardFocus,
                 )
             }
@@ -161,8 +163,6 @@ fun ToDoList(
                         onConfirmAdding = { onConfirmAdding(it) },
                         modifier = Modifier.padding(16.dp),
                         addTaskKeyboardFocus = addTaskKeyboardFocus,
-                        onValueChange = onAddingValueChange,
-                        value = addingValue,
                     )
                 }
             }
@@ -179,19 +179,17 @@ fun ToDoList(
 @Composable
 fun TaskListElement(
     // TODO: Ich brauche noch einen Cancel Button für das editieren
-    // value: String,
-    edit: Boolean,
-    // onValueChange: (String) -> Unit,
-    focusRequester: FocusRequester,
-    listElement: ListElement,
+    // Die Value behalte ich jetzt bei den COmponenten drin,
+    // dann muss ich nur rausleiten, wenn ich was wirklich speichern will
     onCheckboxClicked: (ListElement) -> Unit,
     onDeleteClicked: (ListElement) -> Unit,
     onEditClicked: (ListElement) -> Unit,
     onFinishEditClicked: (ListElement, String) -> (Unit),
+    edit: Boolean,
+    focusRequester: FocusRequester,
+    listElement: ListElement,
     modifier: Modifier = Modifier,
 ) {
-    var value by rememberSaveable { mutableStateOf(listElement.title) }
-
     LaunchedEffect(edit) {
         focusRequester.requestFocus()
     }
@@ -203,18 +201,19 @@ fun TaskListElement(
                     start = 16.dp,
                     end = 16.dp,
                     top = 8.dp,
-                    // bottom = 4.dp
                 ).background(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(8.dp),
                 ),
-        // .height(IntrinsicSize.Max),
         verticalAlignment = Alignment.CenterVertically,
     )
     {
         if (edit) {
+            // Mit Absicht hier positioniert, da ich die variable nur erstellen will, wenn das
+            // Item editiert wird
+            var value by rememberSaveable { mutableStateOf(listElement.title) }
+
             BasicTextField(
-                // = TextFieldDefaults.te,
                 textStyle =
                     MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 modifier =
@@ -238,7 +237,7 @@ fun TaskListElement(
                 modifier =
                     Modifier
                         .clickable(
-                            onClick = { },
+                            onClick = { onFinishEditClicked(listElement, value) },
                         ).padding(8.dp),
                 imageVector = Icons.Filled.Check,
                 contentDescription = "Finish editing task",
@@ -297,12 +296,12 @@ fun AddItem(
 
 @Composable
 fun InputForNewItem(
-    value: String,
-    onValueChange: (String) -> (Unit),
     onConfirmAdding: (String) -> (Unit),
     addTaskKeyboardFocus: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
+    var value by rememberSaveable { mutableStateOf("") }
+
     Row(
         modifier =
             modifier
@@ -329,7 +328,7 @@ fun InputForNewItem(
                     .weight(1f)
                     .focusRequester(addTaskKeyboardFocus),
             value = value,
-            onValueChange = { onValueChange(it) },
+            onValueChange = { value = it },
             singleLine = true,
             placeholder = {
                 Text(text = "Neue Aufgabe")
@@ -385,8 +384,6 @@ fun InputPreview() {
         InputForNewItem(
             onConfirmAdding = {},
             addTaskKeyboardFocus = remember { FocusRequester() },
-            value = "Test",
-            onValueChange = { "Test" },
         )
     }
 }

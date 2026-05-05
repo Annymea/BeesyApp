@@ -50,4 +50,31 @@ class ToDoListViewModel : ViewModel() {
             )
         }
     }
+
+    fun updateListItem(
+        updateItem: ListElement,
+        newName: String,
+    ) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                shownList =
+                    currentState.shownList.map {
+                        if (it.id == updateItem.id) {
+                            it.copy(title = newName)
+                        } else {
+                            it
+                        }
+                    },
+                editing = null,
+            )
+        }
+    }
+
+    fun startEditingItem(listItem: ListElement) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                editing = listItem,
+            )
+        }
+    }
 }
