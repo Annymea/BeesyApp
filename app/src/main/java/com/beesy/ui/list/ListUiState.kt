@@ -15,8 +15,6 @@ data class ListUiState(
             ListElement(checked = false, title = "Yoga", id = UUID.randomUUID()),
             ListElement(checked = true, title = "Haushalt", id = UUID.randomUUID()),
         ),
-
     val adding: Boolean = false,
-    val addedWord: String = "",
-    val editing: ListElement? = null
+    val editing: ListElement? = null,
 )

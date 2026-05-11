@@ -1,6 +1,7 @@
 package com.beesy.ui.list
 
 import android.content.res.Configuration
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -58,25 +59,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.beesy.R
+import com.beesy.ui.AppViewModelProvider
 import com.beesy.ui.theme.MyApplicationTheme
 
 @Composable
 fun ToDoScreen(
     modifier: Modifier = Modifier,
-    listViewModel: ToDoListViewModel = viewModel(),
+    listViewModel: ToDoListViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by listViewModel.uiState.collectAsState()
-    var adding by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = { AppBar() },
         floatingActionButton = {
-            if (!adding) {
+            if (!uiState.adding) {
                 AddItem(
                     onClickAdd = {
-                        adding = true
+                        listViewModel.startAdding()
                     },
                 )
             }
@@ -88,16 +89,16 @@ fun ToDoScreen(
             list = uiState.shownList,
             onCheckboxClicked = { listViewModel.onCheckboxChange(it) },
             onConfirmAdding = {
-                adding = false
                 listViewModel.addItem(it)
             },
             onDeleteClicked = { listViewModel.deleteItem(it) },
-            adding = adding,
+            adding = uiState.adding,
             addTaskKeyboardFocus = focusRequester,
             onFinishEditClicked = { item, name ->
                 listViewModel.updateListItem(item, name)
             },
             onEditClicked = { listViewModel.startEditingItem(it) },
+            onCancelEditClicked = { listViewModel.cancelEditing() },
             editedItem = uiState.editing,
         )
     }
@@ -128,6 +129,7 @@ fun ToDoList(
     onEditClicked: (ListElement) -> (Unit),
     onFinishEditClicked: (ListElement, String) -> Unit,
     onConfirmAdding: (String) -> (Unit),
+    onCancelEditClicked: () -> Unit,
     editedItem: ListElement?,
     addTaskKeyboardFocus: FocusRequester,
     adding: Boolean,
@@ -153,6 +155,7 @@ fun ToDoList(
                     onFinishEditClicked = { item, name ->
                         onFinishEditClicked(item, name)
                     },
+                    onCancelEditClicked = { onCancelEditClicked() },
                     edit = editedItem?.id == item.id,
                     focusRequester = addTaskKeyboardFocus,
                 )
@@ -185,6 +188,7 @@ fun TaskListElement(
     onDeleteClicked: (ListElement) -> Unit,
     onEditClicked: (ListElement) -> Unit,
     onFinishEditClicked: (ListElement, String) -> (Unit),
+    onCancelEditClicked: () -> (Unit),
     edit: Boolean,
     focusRequester: FocusRequester,
     listElement: ListElement,
@@ -233,16 +237,30 @@ fun TaskListElement(
                     ),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
             )
-            Icon(
-                modifier =
-                    Modifier
-                        .clickable(
-                            onClick = { onFinishEditClicked(listElement, value) },
-                        ).padding(8.dp),
-                imageVector = Icons.Filled.Check,
-                contentDescription = "Finish editing task",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(
+                modifier = Modifier.padding(8.dp),
+            ) {
+                Icon(
+                    modifier =
+                        Modifier
+                            .clickable(
+                                onClick = { onCancelEditClicked() },
+                            ).padding(8.dp),
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = "Cancel editing task",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Icon(
+                    modifier =
+                        Modifier
+                            .clickable(
+                                onClick = { onFinishEditClicked(listElement, value) },
+                            ).padding(8.dp),
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Finish editing task",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
         if (!edit) {
             Checkbox(
@@ -346,8 +364,6 @@ fun InputForNewItem(
                 KeyboardActions(
                     onDone = { onConfirmAdding(value) },
                 ),
-            trailingIcon = {
-            },
         )
         FilledIconButton(
             modifier =
