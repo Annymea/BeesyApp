@@ -8,4 +8,8 @@ class LocalTaskRepository(
     }
 
     override suspend fun getAllTasks(): List<Task> = taskDAO.getAllTasks()
+
+    override suspend fun updateItem(task: Task) {
+        taskDAO.updateTask(task)
+    }
 }

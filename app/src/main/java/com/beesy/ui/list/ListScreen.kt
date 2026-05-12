@@ -90,7 +90,11 @@ fun ToDoScreen(
         ToDoList(
             modifier = Modifier.padding(innerPadding),
             list = uiState.shownList,
-            onCheckboxClicked = { listViewModel.onCheckboxChange(it) },
+            onCheckboxClicked = {
+                composableScope.launch(Dispatchers.IO) {
+                    listViewModel.onCheckboxChange(it)
+                }
+            },
             onConfirmAdding = {
                 composableScope.launch(Dispatchers.IO) {
                     listViewModel.addItem(it)

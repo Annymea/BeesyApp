@@ -39,19 +39,19 @@ class ToDoListViewModel(
         }
     }
 
-    fun onCheckboxChange(toggleElement: ListElement) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                shownList =
-                    currentState.shownList.map {
-                        if (it.id == toggleElement.id) {
-                            it.copy(checked = !it.checked)
-                        } else {
-                            it
-                        }
-                    },
-            )
-        }
+    suspend fun updateTask(task: Task) {
+        taskRepository.updateItem(task)
+    }
+
+    suspend fun onCheckboxChange(toggleElement: ListElement) {
+        updateTask(
+            Task(
+                id = toggleElement.id,
+                title = toggleElement.title,
+                checked = !toggleElement.checked,
+            ),
+        )
+        reloadAllTasks()
     }
 
     suspend fun addItem(newItem: String) {
@@ -64,7 +64,6 @@ class ToDoListViewModel(
                 checked = false,
             ),
         )
-
         reloadAllTasks()
     }
 
