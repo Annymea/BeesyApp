@@ -196,9 +196,6 @@ fun ToDoList(
 
 @Composable
 fun TaskListElement(
-    // TODO: Ich brauche noch einen Cancel Button für das editieren
-    // Die Value behalte ich jetzt bei den COmponenten drin,
-    // dann muss ich nur rausleiten, wenn ich was wirklich speichern will
     onCheckboxClicked: (ListElement) -> Unit,
     onDeleteClicked: (ListElement) -> Unit,
     onEditClicked: (ListElement) -> Unit,

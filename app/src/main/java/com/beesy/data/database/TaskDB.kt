@@ -1,13 +1,12 @@
-package com.beesy.data
+package com.beesy.data.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.beesy.data.database.entities.TaskEntity
 
-// Hier wird die Datenbank erstellt
-
-@Database(entities = [Task::class], version = 2)
+@Database(entities = [TaskEntity::class], version = 2)
 abstract class TaskDB : RoomDatabase() {
     abstract fun taskDAO(): TaskDAO
 

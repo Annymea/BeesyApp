@@ -1,6 +1,8 @@
 package com.beesy.data
 
 import android.content.Context
+import com.beesy.data.database.LocalTaskRepository
+import com.beesy.data.database.TaskDB
 
 // Wichtig für die Dependency Injection
 interface AppContainer {

@@ -2,8 +2,8 @@ package com.beesy.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.beesy.data.Task
 import com.beesy.data.TaskRepository
+import com.beesy.data.dto.TaskDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,13 +43,13 @@ class ToDoListViewModel(
         }
     }
 
-    suspend fun updateTask(task: Task) {
+    suspend fun updateTask(task: TaskDto) {
         taskRepository.updateItem(task)
     }
 
     suspend fun onCheckboxChange(toggleElement: ListElement) {
         updateTask(
-            Task(
+            TaskDto(
                 id = toggleElement.id,
                 title = toggleElement.title,
                 checked = !toggleElement.checked,
@@ -60,7 +60,7 @@ class ToDoListViewModel(
 
     suspend fun addItem(newItem: String) {
         taskRepository.insertTask(
-            Task(
+            TaskDto(
                 title =
                     newItem.ifBlank {
                         "Neue Aufgabe"
@@ -91,7 +91,7 @@ class ToDoListViewModel(
 
     suspend fun deleteItem(deleteItem: ListElement) {
         taskRepository.deleteTask(
-            Task(
+            TaskDto(
                 id = deleteItem.id,
                 title = deleteItem.title,
                 checked = deleteItem.checked,
@@ -110,7 +110,7 @@ class ToDoListViewModel(
         )
 
         updateTask(
-            Task(
+            TaskDto(
                 id = updateItem.id,
                 title = newName,
                 checked = updateItem.checked,
