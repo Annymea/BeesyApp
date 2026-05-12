@@ -12,4 +12,8 @@ class LocalTaskRepository(
     override suspend fun updateItem(task: Task) {
         taskDAO.updateTask(task)
     }
+
+    override suspend fun deleteTask(task: Task) {
+        taskDAO.deleteTask(task)
+    }
 }

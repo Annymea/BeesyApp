@@ -20,6 +20,10 @@ class ToDoListViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             reloadAllTasks()
+            setEditAndAdd(
+                edit = null,
+                add = false,
+            )
         }
     }
 
@@ -65,57 +69,72 @@ class ToDoListViewModel(
             ),
         )
         reloadAllTasks()
+        setEditAndAdd(
+            edit = null,
+            add = false,
+        )
     }
 
     fun cancelEditing() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                editing = null,
-            )
-        }
+        setEditAndAdd(
+            edit = null,
+            add = false,
+        )
     }
 
     fun startAdding() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                adding = true,
-                editing = null,
-            )
-        }
+        setEditAndAdd(
+            edit = null,
+            add = true,
+        )
     }
 
-    fun deleteItem(deleteItem: ListElement) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                shownList = currentState.shownList - deleteItem,
-            )
-        }
+    suspend fun deleteItem(deleteItem: ListElement) {
+        taskRepository.deleteTask(
+            Task(
+                id = deleteItem.id,
+                title = deleteItem.title,
+                checked = deleteItem.checked,
+            ),
+        )
+        reloadAllTasks()
     }
 
-    fun updateListItem(
+    suspend fun updateListItem(
         updateItem: ListElement,
         newName: String,
     ) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                shownList =
-                    currentState.shownList.map {
-                        if (it.id == updateItem.id) {
-                            it.copy(title = newName)
-                        } else {
-                            it
-                        }
-                    },
-                editing = null,
-            )
-        }
+        setEditAndAdd(
+            edit = null,
+            add = false,
+        )
+
+        updateTask(
+            Task(
+                id = updateItem.id,
+                title = newName,
+                checked = updateItem.checked,
+            ),
+        )
+
+        reloadAllTasks()
     }
 
     fun startEditingItem(listItem: ListElement) {
+        setEditAndAdd(
+            edit = listItem,
+            add = false,
+        )
+    }
+
+    private fun setEditAndAdd(
+        edit: ListElement?,
+        add: Boolean,
+    ) {
         _uiState.update { currentState ->
             currentState.copy(
-                editing = listItem,
-                adding = false,
+                editing = edit,
+                adding = add,
             )
         }
     }

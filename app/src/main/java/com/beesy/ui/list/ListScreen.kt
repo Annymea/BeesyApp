@@ -100,11 +100,17 @@ fun ToDoScreen(
                     listViewModel.addItem(it)
                 }
             },
-            onDeleteClicked = { listViewModel.deleteItem(it) },
+            onDeleteClicked = {
+                composableScope.launch(Dispatchers.IO) {
+                    listViewModel.deleteItem(it)
+                }
+            },
             adding = uiState.adding,
             addTaskKeyboardFocus = focusRequester,
             onFinishEditClicked = { item, name ->
-                listViewModel.updateListItem(item, name)
+                composableScope.launch(Dispatchers.IO) {
+                    listViewModel.updateListItem(item, name)
+                }
             },
             onEditClicked = { listViewModel.startEditingItem(it) },
             onCancelEditClicked = { listViewModel.cancelEditing() },
