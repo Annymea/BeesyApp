@@ -1,20 +1,13 @@
 package com.beesy.ui.list
 
-import java.util.UUID
-
 data class ListElement(
     val checked: Boolean,
     val title: String,
-    val id: UUID,
+    val id: Int,
 )
 
 data class ListUiState(
-    val shownList: List<ListElement> =
-        listOf(
-            ListElement(checked = false, title = "Karteikarten", id = UUID.randomUUID()),
-            ListElement(checked = false, title = "Yoga", id = UUID.randomUUID()),
-            ListElement(checked = true, title = "Haushalt", id = UUID.randomUUID()),
-        ),
+    val shownList: List<ListElement> = listOf(),
     val adding: Boolean = false,
     val editing: ListElement? = null,
 )

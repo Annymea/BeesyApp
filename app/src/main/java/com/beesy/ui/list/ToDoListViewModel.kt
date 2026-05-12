@@ -1,6 +1,5 @@
 package com.beesy.ui.list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.beesy.data.Task
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class ToDoListViewModel(
     private val taskRepository: TaskRepository,
@@ -19,22 +17,27 @@ class ToDoListViewModel(
     private val _uiState = MutableStateFlow(ListUiState())
     val uiState: StateFlow<ListUiState> = _uiState.asStateFlow()
 
-    private lateinit var tasks: List<Task>
-
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val task = Task(title = "Test", checked = false)
-            insertTask(task)
-            tasks = taskRepository.getAllTasks()
-            Log.i("Datenbanktest", getAllTasks().toString())
+            reloadAllTasks()
         }
     }
 
-    suspend fun insertTask(task: Task) {
-        taskRepository.insertTask(task)
+    suspend fun reloadAllTasks() {
+        val allTasks = taskRepository.getAllTasks()
+        _uiState.update { currentState ->
+            currentState.copy(
+                shownList =
+                    allTasks.map {
+                        ListElement(
+                            id = it.id,
+                            title = it.title,
+                            checked = it.checked,
+                        )
+                    },
+            )
+        }
     }
-
-    suspend fun getAllTasks(): List<Task> = taskRepository.getAllTasks()
 
     fun onCheckboxChange(toggleElement: ListElement) {
         _uiState.update { currentState ->
@@ -51,22 +54,18 @@ class ToDoListViewModel(
         }
     }
 
-    fun addItem(newItem: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                shownList =
-                    currentState.shownList +
-                        ListElement(
-                            title =
-                                newItem.ifBlank {
-                                    "Neue Aufgabe"
-                                },
-                            checked = false,
-                            id = UUID.randomUUID(),
-                        ),
-                adding = false,
-            )
-        }
+    suspend fun addItem(newItem: String) {
+        taskRepository.insertTask(
+            Task(
+                title =
+                    newItem.ifBlank {
+                        "Neue Aufgabe"
+                    },
+                checked = false,
+            ),
+        )
+
+        reloadAllTasks()
     }
 
     fun cancelEditing() {

@@ -1,7 +1,6 @@
 package com.beesy.ui.list
 
 import android.content.res.Configuration
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -45,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +61,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.beesy.R
 import com.beesy.ui.AppViewModelProvider
 import com.beesy.ui.theme.MyApplicationTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun ToDoScreen(
@@ -69,6 +71,7 @@ fun ToDoScreen(
 ) {
     val uiState by listViewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
+    val composableScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -89,7 +92,9 @@ fun ToDoScreen(
             list = uiState.shownList,
             onCheckboxClicked = { listViewModel.onCheckboxChange(it) },
             onConfirmAdding = {
-                listViewModel.addItem(it)
+                composableScope.launch(Dispatchers.IO) {
+                    listViewModel.addItem(it)
+                }
             },
             onDeleteClicked = { listViewModel.deleteItem(it) },
             adding = uiState.adding,

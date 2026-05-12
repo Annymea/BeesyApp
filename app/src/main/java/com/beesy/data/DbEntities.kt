@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "title") val title: String,
-    @ColumnInfo(name = "checked") val checked: Boolean?,
+    @ColumnInfo(name = "checked") val checked: Boolean,
 )
 
 // Damit er keinen Fehler schmeißt. Sollen iwann die anderen Tabellen werden

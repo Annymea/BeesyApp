@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 // Hier wird die Datenbank erstellt
 
-@Database(entities = [Task::class], version = 1)
+@Database(entities = [Task::class], version = 2)
 abstract class TaskDB : RoomDatabase() {
     abstract fun taskDAO(): TaskDAO
 
