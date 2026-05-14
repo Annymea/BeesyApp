@@ -11,4 +11,6 @@ interface TaskRepository {
     suspend fun updateItem(task: TaskDto)
 
     suspend fun deleteTask(task: TaskDto)
+
+    suspend fun saveSorting(taskList: List<TaskDto>)
 }

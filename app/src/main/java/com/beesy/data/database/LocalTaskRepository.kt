@@ -8,42 +8,37 @@ class LocalTaskRepository(
     private val taskDAO: TaskDAO,
 ) : TaskRepository {
     override suspend fun insertTask(task: TaskDto) {
-        taskDAO.insertTask(
-            TaskEntity(
-                id = task.id,
-                title = task.title,
-                checked = task.checked,
-            ),
-        )
+        taskDAO.insertTask(mapDtoToEntity(task))
     }
 
-    override suspend fun getAllTasks(): List<TaskDto> =
-        taskDAO.getAllTasks().map {
-            TaskDto(
-                id = it.id,
-                title = it.title,
-                checked = it.checked,
-            )
-        }
+    override suspend fun getAllTasks(): List<TaskDto> = taskDAO.getAllTasks().map { mapEntityToDto(it) }
 
     override suspend fun updateItem(task: TaskDto) {
-        taskDAO.updateTask(
-            TaskEntity(
-                id = task.id,
-                title = task.title,
-                checked = task.checked,
-            ),
-        )
+        taskDAO.updateTask(mapDtoToEntity(task))
     }
 
     // Do I really need the whole task here? Should not the id be enough
     override suspend fun deleteTask(task: TaskDto) {
-        taskDAO.deleteTask(
-            TaskEntity(
-                id = task.id,
-                title = task.title,
-                checked = task.checked,
-            ),
-        )
+        taskDAO.deleteTask(mapDtoToEntity(task))
     }
+
+    override suspend fun saveSorting(taskList: List<TaskDto>) {
+        taskDAO.saveSorting(taskList.map { mapDtoToEntity(it) })
+    }
+
+    private fun mapDtoToEntity(taskDto: TaskDto): TaskEntity =
+        TaskEntity(
+            id = taskDto.id,
+            title = taskDto.title,
+            checked = taskDto.checked,
+            position = taskDto.order,
+        )
+
+    private fun mapEntityToDto(taskEntity: TaskEntity): TaskDto =
+        TaskDto(
+            id = taskEntity.id,
+            title = taskEntity.title,
+            checked = taskEntity.checked,
+            order = taskEntity.position,
+        )
 }

@@ -20,9 +20,8 @@ class ToDoListViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             reloadAllTasks()
-            setEditAndAdd(
-                edit = null,
-                add = false,
+            setState(
+                state = State.IDLE,
             )
         }
     }
@@ -43,6 +42,40 @@ class ToDoListViewModel(
         }
     }
 
+    fun sortElementUp(element: ListElement) {
+        _uiState.update { currentState ->
+            val index = currentState.shownList.indexOf(element)
+
+            if (index <= 0 || index >= currentState.shownList.size) return
+
+            val tempList = currentState.shownList.toMutableList()
+            val t = tempList[index]
+            tempList[index] = tempList[index - 1]
+            tempList[index - 1] = t
+
+            currentState.copy(
+                shownList = tempList,
+            )
+        }
+    }
+
+    fun sortElementDown(element: ListElement) {
+        _uiState.update { currentState ->
+            val index = currentState.shownList.indexOf(element)
+
+            if (index < 0 || index >= currentState.shownList.size - 1) return
+
+            val tempList = currentState.shownList.toMutableList()
+            val t = tempList[index]
+            tempList[index] = tempList[index + 1]
+            tempList[index + 1] = t
+
+            currentState.copy(
+                shownList = tempList,
+            )
+        }
+    }
+
     suspend fun updateTask(task: TaskDto) {
         taskRepository.updateItem(task)
     }
@@ -53,6 +86,7 @@ class ToDoListViewModel(
                 id = toggleElement.id,
                 title = toggleElement.title,
                 checked = !toggleElement.checked,
+                order = _uiState.value.shownList.indexOf(toggleElement),
             ),
         )
         reloadAllTasks()
@@ -66,27 +100,51 @@ class ToDoListViewModel(
                         "Neue Aufgabe"
                     },
                 checked = false,
+                order = _uiState.value.shownList.lastIndex + 1,
             ),
         )
         reloadAllTasks()
-        setEditAndAdd(
-            edit = null,
-            add = false,
+        setState(
+            state = State.IDLE,
         )
     }
 
     fun cancelEditing() {
-        setEditAndAdd(
-            edit = null,
-            add = false,
+        setState(
+            state = State.IDLE,
         )
     }
 
     fun startAdding() {
-        setEditAndAdd(
-            edit = null,
-            add = true,
+        setState(
+            state = State.ADD,
         )
+    }
+
+    fun startSorting() {
+        setState(
+            state = State.SORT,
+        )
+    }
+
+    suspend fun finishSorting(save: Boolean) {
+        if (save) {
+            taskRepository.saveSorting(
+                uiState.value.shownList.mapIndexed { index, item ->
+                    TaskDto(
+                        id = item.id,
+                        title = item.title,
+                        checked = item.checked,
+                        order = index,
+                    )
+                },
+            )
+        }
+
+        setState(
+            state = State.IDLE,
+        )
+        reloadAllTasks()
     }
 
     suspend fun deleteItem(deleteItem: ListElement) {
@@ -95,6 +153,7 @@ class ToDoListViewModel(
                 id = deleteItem.id,
                 title = deleteItem.title,
                 checked = deleteItem.checked,
+                order = _uiState.value.shownList.indexOf(deleteItem),
             ),
         )
         reloadAllTasks()
@@ -104,9 +163,8 @@ class ToDoListViewModel(
         updateItem: ListElement,
         newName: String,
     ) {
-        setEditAndAdd(
-            edit = null,
-            add = false,
+        setState(
+            state = State.IDLE,
         )
 
         updateTask(
@@ -114,6 +172,7 @@ class ToDoListViewModel(
                 id = updateItem.id,
                 title = newName,
                 checked = updateItem.checked,
+                order = _uiState.value.shownList.indexOf(updateItem),
             ),
         )
 
@@ -121,20 +180,20 @@ class ToDoListViewModel(
     }
 
     fun startEditingItem(listItem: ListElement) {
-        setEditAndAdd(
+        setState(
             edit = listItem,
-            add = false,
+            state = State.EDIT,
         )
     }
 
-    private fun setEditAndAdd(
-        edit: ListElement?,
-        add: Boolean,
+    private fun setState(
+        edit: ListElement? = null,
+        state: State,
     ) {
         _uiState.update { currentState ->
             currentState.copy(
-                editing = edit,
-                adding = add,
+                editItem = edit,
+                state = state,
             )
         }
     }

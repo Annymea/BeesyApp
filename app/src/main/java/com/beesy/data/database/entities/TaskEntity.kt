@@ -9,4 +9,5 @@ data class TaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "checked") val checked: Boolean,
+    @ColumnInfo(name = "position") val position: Int,
 )

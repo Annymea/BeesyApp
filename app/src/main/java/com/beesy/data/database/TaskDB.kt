@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.beesy.data.database.entities.TaskEntity
 
-@Database(entities = [TaskEntity::class], version = 2)
+@Database(entities = [TaskEntity::class], version = 5)
 abstract class TaskDB : RoomDatabase() {
     abstract fun taskDAO(): TaskDAO
 

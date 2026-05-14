@@ -9,7 +9,7 @@ import com.beesy.data.database.entities.TaskEntity
 
 @Dao
 interface TaskDAO {
-    @Query("SELECT * FROM task")
+    @Query("SELECT * FROM task ORDER BY position ASC")
     fun getAllTasks(): List<TaskEntity>
 
     @Insert
@@ -20,4 +20,7 @@ interface TaskDAO {
 
     @Delete
     suspend fun deleteTask(task: TaskEntity)
+
+    @Update
+    suspend fun saveSorting(task: List<TaskEntity>)
 }

@@ -6,8 +6,13 @@ data class ListElement(
     val id: Int,
 )
 
+enum class State{
+    IDLE, ADD, EDIT, SORT
+}
+
 data class ListUiState(
     val shownList: List<ListElement> = listOf(),
-    val adding: Boolean = false,
-    val editing: ListElement? = null,
+    val state : State = State.IDLE,
+    // val adding: Boolean = false,
+    val editItem: ListElement? = null,
 )

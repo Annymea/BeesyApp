@@ -4,4 +4,5 @@ data class TaskDto(
     val id: Int = 0,
     val title: String,
     val checked: Boolean,
+    val order: Int,
 )

@@ -3,9 +3,12 @@ package com.beesy.ui.list
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +28,9 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -77,7 +83,7 @@ fun ToDoScreen(
         modifier = modifier.fillMaxSize(),
         topBar = { AppBar() },
         floatingActionButton = {
-            if (!uiState.adding) {
+            if (uiState.state != State.ADD && uiState.state != State.SORT) {
                 AddItem(
                     onClickAdd = {
                         listViewModel.startAdding()
@@ -87,35 +93,97 @@ fun ToDoScreen(
         },
         floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
-        ToDoList(
-            modifier = Modifier.padding(innerPadding),
-            list = uiState.shownList,
-            onCheckboxClicked = {
-                composableScope.launch(Dispatchers.IO) {
-                    listViewModel.onCheckboxChange(it)
+        Column(modifier = Modifier.padding(innerPadding)) {
+            if (uiState.state == State.SORT) {
+                Row {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(
+                        onClick = {
+                            composableScope.launch(Dispatchers.IO) {
+                                listViewModel.finishSorting(false)
+                            }
+                        },
+                    ) {
+                        Text(text = "Cancel")
+                    }
+
+                    Button(
+                        onClick = {
+                            composableScope.launch(Dispatchers.IO) {
+                                listViewModel.finishSorting(true)
+                            }
+                        },
+                    ) {
+                        Text(text = "Save")
+                    }
                 }
-            },
-            onConfirmAdding = {
-                composableScope.launch(Dispatchers.IO) {
-                    listViewModel.addItem(it)
-                }
-            },
-            onDeleteClicked = {
-                composableScope.launch(Dispatchers.IO) {
-                    listViewModel.deleteItem(it)
-                }
-            },
-            adding = uiState.adding,
-            addTaskKeyboardFocus = focusRequester,
-            onFinishEditClicked = { item, name ->
-                composableScope.launch(Dispatchers.IO) {
-                    listViewModel.updateListItem(item, name)
-                }
-            },
-            onEditClicked = { listViewModel.startEditingItem(it) },
-            onCancelEditClicked = { listViewModel.cancelEditing() },
-            editedItem = uiState.editing,
-        )
+            } else {
+                OptionsForList(
+                    modifier = Modifier.padding(8.dp),
+                    onReorderClicked = {
+                        listViewModel.startSorting()
+                    },
+                )
+            }
+
+            if (uiState.state != State.SORT) {
+                ShowList(
+                    list = uiState.shownList,
+                    onCheckboxClicked = {
+                        composableScope.launch(Dispatchers.IO) {
+                            listViewModel.onCheckboxChange(it)
+                        }
+                    },
+                    onConfirmAdding = {
+                        composableScope.launch(Dispatchers.IO) {
+                            listViewModel.addItem(it)
+                        }
+                    },
+                    onDeleteClicked = {
+                        composableScope.launch(Dispatchers.IO) {
+                            listViewModel.deleteItem(it)
+                        }
+                    },
+                    adding = uiState.state == State.ADD,
+                    addTaskKeyboardFocus = focusRequester,
+                    onFinishEditClicked = { item, name ->
+                        composableScope.launch(Dispatchers.IO) {
+                            listViewModel.updateListItem(item, name)
+                        }
+                    },
+                    onEditClicked = { listViewModel.startEditingItem(it) },
+                    onCancelEditClicked = { listViewModel.cancelEditing() },
+                    editedItem = uiState.editItem,
+                )
+            }
+            if (uiState.state == State.SORT) {
+                ReorderList(
+                    onSortElementUp = { listViewModel.sortElementUp(it) },
+                    onSortElementDown = { listViewModel.sortElementDown(it) },
+                    list = uiState.shownList,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun OptionsForList(
+    onReorderClicked: () -> (Unit),
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = { onReorderClicked() },
+        ) {
+            Text(
+                text = "Drück mich",
+            )
+        }
     }
 }
 
@@ -138,7 +206,82 @@ fun AppBar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ToDoList(
+fun ReorderList(
+    onSortElementUp: (ListElement) -> (Unit),
+    onSortElementDown: (ListElement) -> Unit,
+    list: List<ListElement>,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier =
+            modifier
+                .fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(list) { item ->
+            ReorderListElement(
+                onSortUpClicked = { onSortElementUp(item) },
+                onSortDownClicked = { onSortElementDown(item) },
+                element = item,
+            )
+        }
+    }
+}
+
+@Composable
+fun ReorderListElement(
+    onSortUpClicked: () -> (Unit),
+    onSortDownClicked: () -> (Unit),
+    element: ListElement,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            modifier.background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(8.dp),
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(12.dp),
+            text = element.title,
+        )
+        Row(
+            modifier = Modifier.padding(8.dp),
+        ) {
+            Icon(
+                modifier =
+                    Modifier.clickable(
+                        onClick = {
+                            onSortUpClicked()
+                        },
+                    ),
+                imageVector = Icons.Filled.KeyboardArrowUp,
+                contentDescription = "Edit Task",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Icon(
+                modifier =
+                    Modifier.clickable(
+                        onClick = {
+                            onSortDownClicked()
+                        },
+                    ),
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = "Delete Task",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+fun ShowList(
     onCheckboxClicked: (ListElement) -> (Unit),
     onDeleteClicked: (ListElement) -> (Unit),
     onEditClicked: (ListElement) -> (Unit),
@@ -153,43 +296,41 @@ fun ToDoList(
 ) {
     val listState = rememberLazyListState()
 
-    Column(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            state = listState,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-        ) {
-            items(list) { item ->
-                TaskListElement(
-                    listElement = item,
-                    onCheckboxClicked = { onCheckboxClicked(it) },
-                    onDeleteClicked = { onDeleteClicked(it) },
-                    onEditClicked = { onEditClicked(it) },
-                    onFinishEditClicked = { item, name ->
-                        onFinishEditClicked(item, name)
-                    },
-                    onCancelEditClicked = { onCancelEditClicked() },
-                    edit = editedItem?.id == item.id,
-                    focusRequester = addTaskKeyboardFocus,
+    LaunchedEffect(adding) {
+        listState.animateScrollToItem(list.size)
+        addTaskKeyboardFocus.requestFocus()
+    }
+
+    LazyColumn(
+        state = listState,
+        modifier =
+            modifier
+                .fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(list) { item ->
+            TaskListElement(
+                listElement = item,
+                onCheckboxClicked = { onCheckboxClicked(it) },
+                onDeleteClicked = { onDeleteClicked(it) },
+                onEditClicked = { onEditClicked(it) },
+                onFinishEditClicked = { item, name ->
+                    onFinishEditClicked(item, name)
+                },
+                onCancelEditClicked = { onCancelEditClicked() },
+                edit = editedItem?.id == item.id,
+                focusRequester = addTaskKeyboardFocus,
+            )
+        }
+        item {
+            if (adding) {
+                InputForNewItem(
+                    onConfirmAdding = { onConfirmAdding(it) },
+                    modifier = Modifier, // .padding(16.dp),
+                    addTaskKeyboardFocus = addTaskKeyboardFocus,
                 )
             }
-            item {
-                if (adding) {
-                    InputForNewItem(
-                        onConfirmAdding = { onConfirmAdding(it) },
-                        modifier = Modifier.padding(16.dp),
-                        addTaskKeyboardFocus = addTaskKeyboardFocus,
-                    )
-                }
-            }
-        }
-
-        // only starts this, when adding an item
-        LaunchedEffect(adding) {
-            listState.animateScrollToItem(list.size)
-            addTaskKeyboardFocus.requestFocus()
         }
     }
 }
@@ -212,15 +353,10 @@ fun TaskListElement(
 
     Row(
         modifier =
-            modifier
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 8.dp,
-                ).background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(8.dp),
-                ),
+            modifier.background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(8.dp),
+            ),
         verticalAlignment = Alignment.CenterVertically,
     )
     {
@@ -235,7 +371,7 @@ fun TaskListElement(
                 modifier =
                     Modifier
                         .weight(1f)
-                        .padding(16.dp)
+                        .padding(14.dp)
                         .focusRequester(focusRequester),
                 // Ich kann hier nicht einfach sagen, dass ich den Title nehme,
                 // weil ich den ja noch abbrechen will den Vorgang
@@ -257,7 +393,7 @@ fun TaskListElement(
                         Modifier
                             .clickable(
                                 onClick = { onCancelEditClicked() },
-                            ).padding(8.dp),
+                            ),
                     imageVector = Icons.Filled.Clear,
                     contentDescription = "Cancel editing task",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -267,7 +403,7 @@ fun TaskListElement(
                         Modifier
                             .clickable(
                                 onClick = { onFinishEditClicked(listElement, value) },
-                            ).padding(8.dp),
+                            ),
                     imageVector = Icons.Filled.Check,
                     contentDescription = "Finish editing task",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -412,6 +548,52 @@ fun InputPreview() {
         InputForNewItem(
             onConfirmAdding = {},
             addTaskKeyboardFocus = remember { FocusRequester() },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ElementPreview() {
+    MyApplicationTheme {
+        TaskListElement(
+            onCheckboxClicked = { },
+            onDeleteClicked = { },
+            onEditClicked = { },
+            onFinishEditClicked = { item, name -> {} },
+            onCancelEditClicked = { },
+            edit = false,
+            focusRequester = remember { FocusRequester() },
+            listElement = ListElement(id = 1, title = "Test", checked = true),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EditedElementPreview() {
+    MyApplicationTheme {
+        TaskListElement(
+            onCheckboxClicked = { },
+            onDeleteClicked = { },
+            onEditClicked = { },
+            onFinishEditClicked = { _, _ -> },
+            onCancelEditClicked = { },
+            edit = true,
+            focusRequester = remember { FocusRequester() },
+            listElement = ListElement(id = 1, title = "Test", checked = true),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ReorderElementPreview() {
+    MyApplicationTheme {
+        ReorderListElement(
+            element = ListElement(id = 1, title = "Test", checked = true),
+            onSortUpClicked = {},
+            onSortDownClicked = {},
         )
     }
 }
