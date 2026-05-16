@@ -53,16 +53,16 @@ fun ShowList(
     onConfirmAdding: (String) -> (Unit),
     onCancelEditClicked: () -> Unit,
     editedItem: ListElement?,
-    addTaskKeyboardFocus: FocusRequester,
     adding: Boolean,
     list: List<ListElement>,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
+    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(adding) {
         listState.animateScrollToItem(list.size)
-        addTaskKeyboardFocus.requestFocus()
+        focusRequester.requestFocus()
     }
 
     LazyColumn(
@@ -84,7 +84,6 @@ fun ShowList(
                 },
                 onCancelEditClicked = { onCancelEditClicked() },
                 edit = editedItem?.id == item.id,
-                focusRequester = addTaskKeyboardFocus,
             )
         }
         item {
@@ -92,7 +91,7 @@ fun ShowList(
                 InputForNewItem(
                     onConfirmAdding = { onConfirmAdding(it) },
                     modifier = Modifier, // .padding(16.dp),
-                    addTaskKeyboardFocus = addTaskKeyboardFocus,
+                    startAdding = true,
                 )
             }
         }
@@ -102,7 +101,7 @@ fun ShowList(
 @Composable
 fun TaskListElementInput(
     listElement: ListElement,
-    focusRequester: FocusRequester,
+    startEditing: Boolean,
     onFinishEditClicked: (ListElement, String) -> Unit,
     onCancelEditClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -111,6 +110,11 @@ fun TaskListElementInput(
         mutableStateOf(
             TextFieldValue(listElement.title, TextRange(listElement.title.length)),
         )
+    }
+
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(startEditing) {
+        focusRequester.requestFocus()
     }
 
     BasicTextField(
@@ -166,15 +170,10 @@ fun TaskListElement(
     onFinishEditClicked: (ListElement, String) -> (Unit),
     onCancelEditClicked: () -> (Unit),
     edit: Boolean,
-    focusRequester: FocusRequester,
     listElement: ListElement,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(edit) {
-        focusRequester.requestFocus()
-    }
 
     Row(
         modifier =
@@ -193,7 +192,7 @@ fun TaskListElement(
                 onFinishEditClicked = { item, title ->
                     onFinishEditClicked(item, title)
                 },
-                focusRequester = focusRequester,
+                startEditing = true,
             )
         }
         if (!edit) {
@@ -253,7 +252,6 @@ fun ElementPreview2() {
             onFinishEditClicked = { _, _ -> },
             onCancelEditClicked = { },
             edit = false,
-            focusRequester = remember { FocusRequester() },
             listElement = ListElement(id = 1, title = "Test", checked = true),
         )
     }
@@ -270,7 +268,6 @@ fun EditedElementPreview2() {
             onFinishEditClicked = { _, _ -> },
             onCancelEditClicked = { },
             edit = true,
-            focusRequester = remember { FocusRequester() },
             listElement = ListElement(id = 1, title = "Test", checked = true),
         )
     }

@@ -20,8 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,10 +50,15 @@ fun AddItem(
 @Composable
 fun InputForNewItem(
     onConfirmAdding: (String) -> (Unit),
-    addTaskKeyboardFocus: FocusRequester,
+    startAdding: Boolean,
     modifier: Modifier = Modifier,
 ) {
     var value by rememberSaveable { mutableStateOf("") }
+
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(startAdding) {
+        focusRequester.requestFocus()
+    }
 
     Row(
         modifier =
@@ -77,7 +84,7 @@ fun InputForNewItem(
             modifier =
                 Modifier
                     .weight(1f)
-                    .focusRequester(addTaskKeyboardFocus),
+                    .focusRequester(focusRequester),
             value = value,
             onValueChange = { value = it },
             singleLine = true,
