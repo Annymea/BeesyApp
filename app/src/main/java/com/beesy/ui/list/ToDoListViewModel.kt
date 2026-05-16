@@ -42,6 +42,22 @@ class ToDoListViewModel(
         }
     }
 
+    suspend fun deleteAllCheckedItems() {
+        val allCheckedTasks = uiState.value.shownList.filter { it.checked }
+        taskRepository.deleteMultipleTasks(
+            allCheckedTasks.map {
+                TaskDto(
+                    id = it.id,
+                    title = it.title,
+                    checked = it.checked,
+                    order = uiState.value.shownList.indexOf(it),
+                )
+            },
+        )
+
+        reloadAllTasks()
+    }
+
     fun sortElementUp(element: ListElement) {
         _uiState.update { currentState ->
             val index = currentState.shownList.indexOf(element)

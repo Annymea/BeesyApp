@@ -17,13 +17,27 @@ class LocalTaskRepository(
         taskDAO.updateTask(mapDtoToEntity(task))
     }
 
-    // Do I really need the whole task here? Should not the id be enough
     override suspend fun deleteTask(task: TaskDto) {
+        var allTasks = taskDAO.getAllTasks() - mapDtoToEntity(task)
+        allTasks = allTasks.mapIndexed { index, entity -> entity.copy(position = index) }
+
         taskDAO.deleteTask(mapDtoToEntity(task))
+        taskDAO.saveSorting(allTasks)
     }
 
     override suspend fun saveSorting(taskList: List<TaskDto>) {
         taskDAO.saveSorting(taskList.map { mapDtoToEntity(it) })
+    }
+
+    override suspend fun deleteMultipleTasks(taskList: List<TaskDto>) {
+        var allTasks = taskDAO.getAllTasks() - taskList.map { mapDtoToEntity(it) }.toSet()
+        allTasks = allTasks.mapIndexed { index, entity -> entity.copy(position = index) }
+
+        taskDAO.deleteMultipleTasks(
+            taskList.map { mapDtoToEntity(it) },
+        )
+
+        taskDAO.saveSorting(allTasks)
     }
 
     private fun mapDtoToEntity(taskDto: TaskDto): TaskEntity =

@@ -21,6 +21,8 @@ interface TaskDAO {
     @Delete
     suspend fun deleteTask(task: TaskEntity)
 
+    @Delete fun deleteMultipleTasks(taskList: List<TaskEntity>)
+
     @Update
     suspend fun saveSorting(task: List<TaskEntity>)
 }
