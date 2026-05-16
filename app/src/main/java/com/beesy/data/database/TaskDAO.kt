@@ -12,6 +12,9 @@ interface TaskDAO {
     @Query("SELECT * FROM task ORDER BY position ASC")
     fun getAllTasks(): List<TaskEntity>
 
+    @Query("SELECT MAX(position) FROM task")
+    fun getMaxPosition(): Int
+
     @Insert
     suspend fun insertTask(task: TaskEntity)
 

@@ -8,7 +8,8 @@ class LocalTaskRepository(
     private val taskDAO: TaskDAO,
 ) : TaskRepository {
     override suspend fun insertTask(task: TaskDto) {
-        taskDAO.insertTask(mapDtoToEntity(task))
+        val maxPosition = taskDAO.getMaxPosition()
+        taskDAO.insertTask(mapDtoToEntity(task.copy(order = maxPosition + 1)))
     }
 
     override suspend fun getAllTasks(): List<TaskDto> = taskDAO.getAllTasks().map { mapEntityToDto(it) }
@@ -18,11 +19,7 @@ class LocalTaskRepository(
     }
 
     override suspend fun deleteTask(task: TaskDto) {
-        var allTasks = taskDAO.getAllTasks() - mapDtoToEntity(task)
-        allTasks = allTasks.mapIndexed { index, entity -> entity.copy(position = index) }
-
         taskDAO.deleteTask(mapDtoToEntity(task))
-        taskDAO.saveSorting(allTasks)
     }
 
     override suspend fun saveSorting(taskList: List<TaskDto>) {
@@ -30,14 +27,9 @@ class LocalTaskRepository(
     }
 
     override suspend fun deleteMultipleTasks(taskList: List<TaskDto>) {
-        var allTasks = taskDAO.getAllTasks() - taskList.map { mapDtoToEntity(it) }.toSet()
-        allTasks = allTasks.mapIndexed { index, entity -> entity.copy(position = index) }
-
         taskDAO.deleteMultipleTasks(
             taskList.map { mapDtoToEntity(it) },
         )
-
-        taskDAO.saveSorting(allTasks)
     }
 
     private fun mapDtoToEntity(taskDto: TaskDto): TaskEntity =
