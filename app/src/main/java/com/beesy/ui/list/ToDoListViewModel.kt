@@ -111,10 +111,7 @@ class ToDoListViewModel(
     suspend fun addItem(newItem: String) {
         taskRepository.insertTask(
             TaskDto(
-                title =
-                    newItem.ifBlank {
-                        "Neue Aufgabe"
-                    },
+                title = newItem,
                 checked = false,
                 order = _uiState.value.shownList.lastIndex + 1,
             ),

@@ -77,7 +77,7 @@ fun ButtonsForEndSorting(
                 onCancelSorting()
             },
         ) {
-            Text(text = "Abbrechen")
+            Text(text = stringResource(R.string.cancel))
         }
 
         Button(
@@ -85,7 +85,7 @@ fun ButtonsForEndSorting(
                 onSaveSorting()
             },
         ) {
-            Text(text = "Speichern")
+            Text(text = stringResource(R.string.save))
         }
     }
 }
@@ -105,7 +105,7 @@ fun AppBarMenu(
         IconButton(onClick = { expanded = !expanded }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = "More options",
+                contentDescription = stringResource(R.string.more_options),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
@@ -114,11 +114,11 @@ fun AppBarMenu(
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text("Sortiere Liste") },
+                text = { Text(stringResource(R.string.sort_list)) },
                 onClick = { onReorderClicked() },
             )
             DropdownMenuItem(
-                text = { Text("Lösche abgeschlossene Aufgaben") },
+                text = { Text(stringResource(R.string.delete_finished_tasks)) },
                 onClick = { onDeleteAllCheckedClicked() },
             )
         }

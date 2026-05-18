@@ -40,11 +40,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.beesy.R
 import com.beesy.ui.theme.MyApplicationTheme
 
 @Composable
@@ -93,7 +95,7 @@ fun ShowList(
             if (adding) {
                 InputForNewItem(
                     onConfirmAdding = { onConfirmAdding(it) },
-                    modifier = Modifier, // .padding(16.dp),
+                    modifier = Modifier,
                     startAdding = true,
                 )
             }
@@ -154,7 +156,7 @@ fun TaskListElementInput(
                         onClick = { onCancelEditClicked() },
                     ),
             imageVector = Icons.Filled.Clear,
-            contentDescription = "Cancel editing task",
+            contentDescription = stringResource(R.string.cancel_editing_task),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Icon(
@@ -164,7 +166,7 @@ fun TaskListElementInput(
                         onClick = { onFinishEditClicked(listElement, value.text) },
                     ),
             imageVector = Icons.Filled.Check,
-            contentDescription = "Finish editing task",
+            contentDescription = stringResource(R.string.finish_editing_task),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -215,7 +217,10 @@ fun TaskListElement(
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = listElement.title,
+                text =
+                    listElement.title.ifBlank {
+                        stringResource(R.string.new_task)
+                    },
             )
             Box(
                 modifier =
@@ -227,7 +232,7 @@ fun TaskListElement(
                         Modifier
                             .clickable(onClick = { expanded = !expanded }),
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More options",
+                    contentDescription = stringResource(R.string.more_options),
                 )
 
                 DropdownMenu(
@@ -235,14 +240,14 @@ fun TaskListElement(
                     onDismissRequest = { expanded = false },
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Bearbeiten") },
+                        text = { Text(stringResource(R.string.edit)) },
                         onClick = {
                             onEditClicked(listElement)
                             expanded = false
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Löschen") },
+                        text = { Text(stringResource(R.string.delete)) },
                         onClick = {
                             onDeleteClicked(listElement)
                             expanded = false
