@@ -187,10 +187,15 @@ fun TaskListElement(
 
     Row(
         modifier =
-            modifier.background(
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                shape = RoundedCornerShape(8.dp),
-            ),
+            modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(8.dp),
+                ).clickable(
+                    onClick = {
+                        onCheckboxClicked(listElement)
+                    },
+                ),
         verticalAlignment = Alignment.CenterVertically,
     )
     {
