@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -79,8 +81,8 @@ fun InputForNewItem(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ),
             modifier =
                 Modifier
@@ -94,7 +96,7 @@ fun InputForNewItem(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Filled.Create,
+                    imageVector = Icons.Default.Create,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -117,9 +119,14 @@ fun InputForNewItem(
                     topEnd = 8.dp,
                     bottomEnd = 8.dp,
                 ),
+            colors =
+                IconButtonDefaults.filledIconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
         ) {
             Icon(
-                imageVector = Icons.Filled.Check,
+                imageVector = Icons.Default.Check,
                 contentDescription = "create list item",
             )
         }
