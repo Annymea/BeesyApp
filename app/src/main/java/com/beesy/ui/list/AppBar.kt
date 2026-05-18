@@ -40,13 +40,13 @@ fun AppBar(
     TopAppBar(
         colors =
             TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
             ),
         modifier = modifier,
         title = {
             Text(
                 text = stringResource(R.string.app_name),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         },
         actions = {
@@ -106,7 +106,7 @@ fun AppBarMenu(
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "More options",
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
         DropdownMenu(

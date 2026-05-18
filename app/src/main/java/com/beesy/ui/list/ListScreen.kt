@@ -53,6 +53,17 @@ fun ToDoScreen(
                 },
             )
         },
+        floatingActionButton =
+            {
+                if (uiState.state != State.ADD) {
+                    AddItem(
+                        modifier = Modifier.size(52.dp),
+                        onClickAdd = {
+                            listViewModel.startAdding()
+                        },
+                    )
+                }
+            },
     ) { innerPadding ->
         Column(
             modifier =
@@ -88,28 +99,28 @@ fun ToDoScreen(
                     onCancelEditClicked = { listViewModel.cancelEditing() },
                     editedItem = uiState.editItem,
                 )
-                if (uiState.state != State.ADD) {
-                    Surface(
-                        tonalElevation = 1.dp,
-                        shadowElevation = 8.dp,
-                    ) {
-                        Row(
-                            modifier =
-                                Modifier
-                                    .padding(16.dp),
-                        ) {
-                            Spacer(
-                                modifier = Modifier.weight(1f),
-                            )
-                            AddItem(
-                                modifier = Modifier.size(52.dp),
-                                onClickAdd = {
-                                    listViewModel.startAdding()
-                                },
-                            )
-                        }
-                    }
-                }
+                // if (uiState.state != State.ADD) {
+                //     Surface(
+                //         tonalElevation = 1.dp,
+                //         shadowElevation = 8.dp,
+                //     ) {
+                //         Row(
+                //             modifier =
+                //                 Modifier
+                //                     .padding(16.dp),
+                //         ) {
+                //             Spacer(
+                //                 modifier = Modifier.weight(1f),
+                //             )
+                //             AddItem(
+                //                 modifier = Modifier.size(52.dp),
+                //                 onClickAdd = {
+                //                     listViewModel.startAdding()
+                //                 },
+                //             )
+                //         }
+                //     }
+                // }
             }
             if (uiState.state == State.SORT) {
                 ReorderList(
