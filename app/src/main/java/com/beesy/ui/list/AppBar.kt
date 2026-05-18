@@ -40,13 +40,13 @@ fun AppBar(
     TopAppBar(
         colors =
             TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
             ),
         modifier = modifier,
         title = {
             Text(
                 text = stringResource(R.string.app_name),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         },
         actions = {
@@ -77,7 +77,7 @@ fun ButtonsForEndSorting(
                 onCancelSorting()
             },
         ) {
-            Text(text = "Abbrechen")
+            Text(text = stringResource(R.string.cancel))
         }
 
         Button(
@@ -85,7 +85,7 @@ fun ButtonsForEndSorting(
                 onSaveSorting()
             },
         ) {
-            Text(text = "Speichern")
+            Text(text = stringResource(R.string.save))
         }
     }
 }
@@ -105,8 +105,8 @@ fun AppBarMenu(
         IconButton(onClick = { expanded = !expanded }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = "More options",
-                tint = MaterialTheme.colorScheme.onPrimary,
+                contentDescription = stringResource(R.string.more_options),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
         DropdownMenu(
@@ -114,11 +114,11 @@ fun AppBarMenu(
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text("Sortiere Liste") },
+                text = { Text(stringResource(R.string.sort_list)) },
                 onClick = { onReorderClicked() },
             )
             DropdownMenuItem(
-                text = { Text("Lösche abgeschlossene Aufgaben") },
+                text = { Text(stringResource(R.string.delete_finished_tasks)) },
                 onClick = { onDeleteAllCheckedClicked() },
             )
         }

@@ -19,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.beesy.R
 
 @Composable
 fun ReorderList(
@@ -78,7 +80,7 @@ fun ReorderListElement(
                         },
                     ),
                 imageVector = Icons.Filled.KeyboardArrowUp,
-                contentDescription = "Edit Task",
+                contentDescription = stringResource(R.string.edit_task),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Icon(
@@ -89,7 +91,7 @@ fun ReorderListElement(
                         },
                     ),
                 imageVector = Icons.Filled.KeyboardArrowDown,
-                contentDescription = "Delete Task",
+                contentDescription = stringResource(R.string.delete_task),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
