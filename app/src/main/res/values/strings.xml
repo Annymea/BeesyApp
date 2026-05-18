@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Beesy</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="more_options">More options</string>
+    <string name="sort_list">Sort list</string>
+    <string name="delete_finished_tasks">Delete finished tasks</string>
+    <string name="add_task">Add task</string>
+    <string name="new_task">New task</string>
+    <string name="edit_task">Edit task</string>
+    <string name="delete_task">Delete task</string>
+    <string name="cancel_editing_task">Cancel editing task</string>
+    <string name="finish_editing_task">Finish editing task</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

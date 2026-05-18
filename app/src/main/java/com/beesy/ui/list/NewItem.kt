@@ -33,8 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.beesy.R
 
 @Composable
 fun AddItem(
@@ -45,7 +47,10 @@ fun AddItem(
         modifier = modifier,
         onClick = { onClickAdd() },
     ) {
-        Icon(Icons.Default.Add, "Floating action button.")
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(R.string.add_task),
+        )
     }
 }
 
@@ -91,7 +96,7 @@ fun InputForNewItem(
             onValueChange = { value = it },
             singleLine = true,
             placeholder = {
-                Text(text = "Neue Aufgabe")
+                Text(text = stringResource(R.string.new_task))
             },
             leadingIcon = {
                 Icon(
@@ -126,7 +131,7 @@ fun InputForNewItem(
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = "create list item",
+                contentDescription = stringResource(R.string.add_task),
             )
         }
     }
