@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,7 +40,7 @@ fun AddItem(
     onClickAdd: () -> (Unit),
     modifier: Modifier = Modifier,
 ) {
-    FilledIconButton(
+    FloatingActionButton(
         modifier = modifier,
         onClick = { onClickAdd() },
     ) {
