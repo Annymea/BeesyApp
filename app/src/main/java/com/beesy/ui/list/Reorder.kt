@@ -57,17 +57,21 @@ fun ReorderListElement(
     Row(
         modifier =
             modifier.background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(8.dp),
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier =
                 Modifier
                     .weight(1f)
                     .padding(12.dp),
-            text = element.title,
+            text =
+                element.title.ifBlank {
+                    stringResource(R.string.new_task)
+                },
         )
         Row(
             modifier = Modifier.padding(8.dp),
