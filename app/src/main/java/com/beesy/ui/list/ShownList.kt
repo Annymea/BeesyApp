@@ -129,7 +129,9 @@ fun TaskListElementInput(
 
     BasicTextField(
         textStyle =
-            MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            MaterialTheme.typography.bodyLarge.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
         modifier =
             modifier
                 .padding(14.dp)
@@ -218,9 +220,11 @@ fun TaskListElement(
                     CheckboxDefaults.colors(
                         checkedColor = MaterialTheme.colorScheme.primaryContainer,
                         checkmarkColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     ),
             )
             Text(
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f),
                 text =
                     listElement.title.ifBlank {
@@ -238,6 +242,7 @@ fun TaskListElement(
                             .clickable(onClick = { expanded = !expanded }),
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = stringResource(R.string.more_options),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 DropdownMenu(
@@ -245,14 +250,24 @@ fun TaskListElement(
                     onDismissRequest = { expanded = false },
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.edit)) },
+                        text = {
+                            Text(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                text = stringResource(R.string.edit),
+                            )
+                        },
                         onClick = {
                             onEditClicked(listElement)
                             expanded = false
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.delete)) },
+                        text = {
+                            Text(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                text = stringResource(R.string.delete),
+                            )
+                        },
                         onClick = {
                             onDeleteClicked(listElement)
                             expanded = false

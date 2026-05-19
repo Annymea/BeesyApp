@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,17 +74,31 @@ fun ButtonsForEndSorting(
 ) {
     Row(modifier = modifier) {
         Button(
+            modifier = Modifier.padding(end = 8.dp),
             onClick = {
                 onCancelSorting()
             },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
         ) {
-            Text(text = stringResource(R.string.cancel))
+            Text(
+                text = stringResource(R.string.cancel),
+            )
         }
 
         Button(
+            modifier = Modifier.padding(end = 8.dp),
             onClick = {
                 onSaveSorting()
             },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
         ) {
             Text(text = stringResource(R.string.save))
         }
@@ -114,11 +129,21 @@ fun AppBarMenu(
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.sort_list)) },
+                text = {
+                    Text(
+                        text = stringResource(R.string.sort_list),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
                 onClick = { onReorderClicked() },
             )
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.delete_finished_tasks)) },
+                text = {
+                    Text(
+                        text = stringResource(R.string.delete_finished_tasks),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
                 onClick = { onDeleteAllCheckedClicked() },
             )
         }
