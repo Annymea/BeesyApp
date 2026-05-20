@@ -13,4 +13,7 @@
     <string name="finish_editing_task">Finish editing task</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="task_list">Task list</string>
+    <string name="tasks">Tasks</string>
+    <string name="skills">Skills</string>
 </resources>

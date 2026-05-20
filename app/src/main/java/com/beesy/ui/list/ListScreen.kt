@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ToDoScreen(
     modifier: Modifier = Modifier,
+    navigationBar: @Composable (() -> Unit) = {},
     listViewModel: ToDoListViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by listViewModel.uiState.collectAsState()
@@ -31,6 +32,9 @@ fun ToDoScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        bottomBar = {
+            navigationBar()
+        },
         topBar = {
             AppBar(
                 onReorderClicked = { listViewModel.startSorting() },
