@@ -135,7 +135,10 @@ fun AppBarMenu(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
-                onClick = { onReorderClicked() },
+                onClick = {
+                    expanded = false
+                    onReorderClicked()
+                },
             )
             DropdownMenuItem(
                 text = {
@@ -144,7 +147,10 @@ fun AppBarMenu(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
-                onClick = { onDeleteAllCheckedClicked() },
+                onClick = {
+                    expanded = false
+                    onDeleteAllCheckedClicked()
+                },
             )
         }
     }
