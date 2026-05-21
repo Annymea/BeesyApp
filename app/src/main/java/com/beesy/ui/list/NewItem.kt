@@ -1,11 +1,15 @@
 package com.beesy.ui.list
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.Card
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -35,8 +40,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.beesy.R
+import com.beesy.ui.theme.MyApplicationTheme
 
 @Composable
 fun AddItem(
@@ -134,5 +143,52 @@ fun InputForNewItem(
                 contentDescription = stringResource(R.string.add_task),
             )
         }
+    }
+}
+
+@Composable
+fun AddItemDialog(
+    onDismiss: () -> (Unit),
+    onSave: () -> (Unit),
+) {
+    val value = remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier,
+            ) {
+                TextField(
+                    value = "",
+                    onValueChange = { value.value = it },
+                )
+            }
+            Text(
+                text = "This is a minimal dialog",
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center),
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PrevDialog() {
+    MyApplicationTheme {
+        AddItemDialog(
+            onDismiss = {},
+            onSave = {},
+        )
     }
 }
