@@ -1,5 +1,7 @@
 package com.beesy.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.beesy.ui.list.ToDoScreen
 
+const val SCREEN_TRANSITION_MILLIS = 500
+
 @Composable
 fun AppNavHost(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -34,6 +38,38 @@ fun AppNavHost(modifier: Modifier = Modifier) {
         modifier = modifier,
         navController = navController,
         startDestination = startDestination.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start,
+                tween(
+                    SCREEN_TRANSITION_MILLIS,
+                ),
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start,
+                tween(
+                    SCREEN_TRANSITION_MILLIS,
+                ),
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.End,
+                tween(
+                    SCREEN_TRANSITION_MILLIS,
+                ),
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.End,
+                tween(
+                    SCREEN_TRANSITION_MILLIS,
+                ),
+            )
+        },
     ) {
         NavigationBarDestinations.entries.forEach { destination ->
             composable(destination.route) {
