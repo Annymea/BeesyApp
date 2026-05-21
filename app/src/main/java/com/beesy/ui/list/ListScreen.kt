@@ -58,7 +58,7 @@ fun ToDoScreen(
         },
         floatingActionButton =
             {
-                if (uiState.state != State.ADD) {
+                if (uiState.state != State.ADD && uiState.state != State.SORT) {
                     AddItem(
                         modifier = Modifier.size(52.dp),
                         onClickAdd = {
