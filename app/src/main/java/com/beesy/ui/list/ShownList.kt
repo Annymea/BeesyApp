@@ -55,7 +55,6 @@ fun ShowList(
     onDeleteClicked: (ListElement) -> (Unit),
     onEditClicked: (ListElement) -> (Unit),
     onFinishEditClicked: (ListElement, String) -> Unit,
-    onConfirmAdding: (String) -> (Unit),
     onCancelEditClicked: () -> Unit,
     editedItem: ListElement?,
     adding: Boolean,
@@ -92,18 +91,7 @@ fun ShowList(
             )
         }
         item {
-            if (adding) {
-                InputForNewItem(
-                    onConfirmAdding = { onConfirmAdding(it) },
-                    modifier = Modifier,
-                    startAdding = true,
-                )
-            }
-        }
-        item {
-            if (!adding) {
-                Spacer(modifier.height(40.dp))
-            }
+            Spacer(modifier.height(40.dp))
         }
     }
 }

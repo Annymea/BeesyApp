@@ -61,8 +61,10 @@ fun ToDoScreen(
                 if (uiState.state != State.ADD && uiState.state != State.SORT) {
                     AddItem(
                         modifier = Modifier.size(52.dp),
-                        onClickAdd = {
-                            listViewModel.startAdding()
+                        onAddItem = {
+                            composableScope.launch(Dispatchers.IO) {
+                                listViewModel.addItem(it)
+                            }
                         },
                     )
                 }
@@ -82,11 +84,6 @@ fun ToDoScreen(
                     onCheckboxClicked = {
                         composableScope.launch(Dispatchers.IO) {
                             listViewModel.onCheckboxChange(it)
-                        }
-                    },
-                    onConfirmAdding = {
-                        composableScope.launch(Dispatchers.IO) {
-                            listViewModel.addItem(it)
                         }
                     },
                     onDeleteClicked = {
@@ -121,17 +118,6 @@ fun ToDoScreen(
 fun ScreenPreview() {
     MyApplicationTheme {
         ToDoScreen()
-    }
-}
-
-@Preview
-@Composable
-fun InputPreview() {
-    MyApplicationTheme {
-        InputForNewItem(
-            onConfirmAdding = {},
-            startAdding = true,
-        )
     }
 }
 

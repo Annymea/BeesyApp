@@ -16,4 +16,6 @@
     <string name="task_list">Task list</string>
     <string name="tasks">Tasks</string>
     <string name="skills">Skills</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="add_new_task">Add new task</string>
 </resources>

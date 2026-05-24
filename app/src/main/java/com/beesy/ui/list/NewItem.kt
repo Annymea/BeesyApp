@@ -1,27 +1,20 @@
 package com.beesy.ui.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -33,14 +26,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -49,98 +40,33 @@ import com.beesy.ui.theme.MyApplicationTheme
 
 @Composable
 fun AddItem(
-    onClickAdd: () -> (Unit),
+    onAddItem: (String) -> (Unit),
     modifier: Modifier = Modifier,
 ) {
+    val openAlertDialog = remember { mutableStateOf(false) }
+
     FloatingActionButton(
         modifier = modifier,
-        onClick = { onClickAdd() },
+        onClick = {
+            openAlertDialog.value = true
+        },
     ) {
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = stringResource(R.string.add_task),
         )
     }
-}
 
-@Composable
-fun InputForNewItem(
-    onConfirmAdding: (String) -> (Unit),
-    startAdding: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    var value by rememberSaveable { mutableStateOf("") }
-
-    val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(startAdding) {
-        focusRequester.requestFocus()
-    }
-
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        TextField(
-            shape =
-                RoundedCornerShape(
-                    topStart = 8.dp,
-                    bottomStart = 8.dp,
-                ),
-            colors =
-                TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                ),
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .focusRequester(focusRequester),
-            value = value,
-            onValueChange = { value = it },
-            singleLine = true,
-            placeholder = {
-                Text(text = stringResource(R.string.new_task))
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Create,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
-            keyboardOptions =
-                KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions =
-                KeyboardActions(
-                    onDone = { onConfirmAdding(value) },
-                ),
-        )
-        FilledIconButton(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f),
-            onClick = { onConfirmAdding(value) },
-            shape =
-                RoundedCornerShape(
-                    topEnd = 8.dp,
-                    bottomEnd = 8.dp,
-                ),
-            colors =
-                IconButtonDefaults.filledIconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = stringResource(R.string.add_task),
+    when {
+        openAlertDialog.value -> {
+            AddItemDialog(
+                onSave = {
+                    onAddItem(it)
+                    openAlertDialog.value = false
+                },
+                onDismiss = {
+                    openAlertDialog.value = false
+                },
             )
         }
     }
@@ -149,35 +75,102 @@ fun InputForNewItem(
 @Composable
 fun AddItemDialog(
     onDismiss: () -> (Unit),
-    onSave: () -> (Unit),
+    onSave: (String) -> (Unit),
 ) {
-    val value = remember { mutableStateOf("") }
+    var value by rememberSaveable { mutableStateOf("") }
 
-    Dialog(onDismissRequest = { onDismiss() }) {
+    val focusRequester = remember { FocusRequester() }
+
+    Dialog(
+        onDismissRequest = { onDismiss() },
+    ) {
+        LaunchedEffect(true) {
+            focusRequester.requestFocus()
+        }
+
         Card(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
                     .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
-                modifier = Modifier,
+                modifier = Modifier.padding(16.dp),
             ) {
-                TextField(
-                    value = "",
-                    onValueChange = { value.value = it },
+                Text(
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    text = stringResource(R.string.add_new_task),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                TextField(
+                    shape =
+                        RoundedCornerShape(
+                            topStart = 8.dp,
+                            bottomStart = 8.dp,
+                        ),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        ),
+                    modifier =
+                        Modifier
+                            .focusRequester(focusRequester),
+                    value = value,
+                    onValueChange = { value = it },
+                    singleLine = true,
+                    placeholder = {
+                        Text(text = stringResource(R.string.new_task))
+                    },
+                    keyboardOptions =
+                        KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions =
+                        KeyboardActions(
+                            onDone = { onSave(value) },
+                        ),
+                )
+
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    Button(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .padding(start = 16.dp, end = 8.dp),
+                        onClick = { onDismiss() },
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            ),
+                    ) {
+                        Text(text = stringResource(R.string.dismiss))
+                    }
+                    Button(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp, end = 16.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            ),
+                        onClick = { onSave(value) },
+                    ) {
+                        Text(text = stringResource(R.string.save))
+                    }
+                }
             }
-            Text(
-                text = "This is a minimal dialog",
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                textAlign = TextAlign.Center,
-            )
         }
     }
 }
