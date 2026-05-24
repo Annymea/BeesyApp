@@ -91,15 +91,11 @@ fun ToDoScreen(
                             listViewModel.deleteItem(it)
                         }
                     },
-                    adding = uiState.state == State.ADD,
                     onFinishEditClicked = { item, name ->
                         composableScope.launch(Dispatchers.IO) {
                             listViewModel.updateListItem(item, name)
                         }
                     },
-                    onEditClicked = { listViewModel.startEditingItem(it) },
-                    onCancelEditClicked = { listViewModel.cancelEditing() },
-                    editedItem = uiState.editItem,
                 )
             }
             if (uiState.state == State.SORT) {
@@ -128,10 +124,7 @@ fun ElementPreview() {
         TaskListElement(
             onCheckboxClicked = { },
             onDeleteClicked = { },
-            onEditClicked = { },
             onFinishEditClicked = { _, _ -> },
-            onCancelEditClicked = { },
-            edit = false,
             listElement = ListElement(id = 1, title = "Test", checked = true),
         )
     }
@@ -144,10 +137,7 @@ fun EditedElementPreview() {
         TaskListElement(
             onCheckboxClicked = { },
             onDeleteClicked = { },
-            onEditClicked = { },
             onFinishEditClicked = { _, _ -> },
-            onCancelEditClicked = { },
-            edit = true,
             listElement = ListElement(id = 1, title = "Test", checked = true),
         )
     }
