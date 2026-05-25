@@ -8,10 +8,11 @@ import androidx.room.Update
 import com.beesy.data.database.entities.SkillEntity
 import com.beesy.data.database.entities.SkillToTaskEntity
 import com.beesy.data.database.entities.TaskEntity
+import com.beesy.data.database.helperDataClasses.SkillShortInfo
 
 @Dao
 interface TaskDAO {
-    @Query("SELECT id, title, checked FROM task ORDER BY position ASC")
+    @Query("SELECT id, title, checked, position FROM task ORDER BY position ASC")
     fun getAllTasks(): List<TaskEntity>
 
     @Query("SELECT MAX(position) FROM task")
@@ -26,7 +27,7 @@ interface TaskDAO {
             "JOIN skill ON skill_id = id " +
             "WHERE task_id = :taskId",
     )
-    fun getSkillsOfTask(taskId: Int): List<Pair<Int, String>>
+    fun getSkillsOfTask(taskId: Int): List<SkillShortInfo>
 
     @Insert
     suspend fun insertTask(task: TaskEntity)
