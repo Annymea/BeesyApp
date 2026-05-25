@@ -2,14 +2,12 @@ package com.beesy.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.beesy.ui.list.ToDoScreen
+import com.beesy.ui.skills.SkillsScreen
 
 const val SCREEN_TRANSITION_MILLIS = 500
 
@@ -89,8 +88,8 @@ fun AppNavHost(modifier: Modifier = Modifier) {
                     }
 
                     NavigationBarDestinations.Skills -> {
-                        Scaffold(
-                            bottomBar = {
+                        SkillsScreen(
+                            navigationBar = {
                                 Navigation(
                                     selectedDestination = selectedDestination,
                                     navController = navController,
@@ -99,12 +98,7 @@ fun AppNavHost(modifier: Modifier = Modifier) {
                                     },
                                 )
                             },
-                        ) { innerPadding ->
-                            Text(
-                                modifier = Modifier.padding(innerPadding),
-                                text = "Hier könnten ihre Skills stehen",
-                            )
-                        }
+                        )
                     }
                 }
             }
