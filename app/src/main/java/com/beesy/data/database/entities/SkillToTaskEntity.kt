@@ -12,15 +12,17 @@ import androidx.room.ForeignKey
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("task_id"),
             onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = SkillEntity::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("skill_id"),
             onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE,
         ),
     ],
-    primaryKeys = [ "task_id", "skill_id" ],
+    primaryKeys = ["task_id", "skill_id"],
 )
 data class SkillToTaskEntity(
     @ColumnInfo(name = "task_id")
