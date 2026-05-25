@@ -5,4 +5,5 @@ data class TaskDto(
     val title: String,
     val checked: Boolean,
     val order: Int,
+    val skills: List<MinSkillDto> = listOf(),
 )
