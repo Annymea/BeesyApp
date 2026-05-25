@@ -22,6 +22,7 @@ class SkillsViewModel(
     }
 
     fun loadAllSkills() {
+        stopAdding()
         viewModelScope.launch(Dispatchers.IO) {
             val allSkills = taskRepository.getAllSkills()
             _uiState.update { currentState ->
@@ -40,9 +41,25 @@ class SkillsViewModel(
         }
     }
 
-    fun addSkill() {
+    fun stopAdding() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                adding = false,
+            )
+        }
+    }
+
+    fun startAdding() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                adding = true,
+            )
+        }
+    }
+
+    fun addSkill(title: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            taskRepository.addSkill(SkillDto(title = "Neu"))
+            taskRepository.addSkill(SkillDto(title = title))
             loadAllSkills()
         }
     }

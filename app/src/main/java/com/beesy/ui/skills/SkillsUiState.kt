@@ -8,5 +8,6 @@ data class SkillListElement(
 )
 
 data class SkillsUiState(
-    val shownSkills: List<SkillListElement> = listOf()
+    val shownSkills: List<SkillListElement> = listOf(),
+    val adding: Boolean = false,
 )
