@@ -122,18 +122,6 @@ class ToDoListViewModel(
         )
     }
 
-    fun cancelEditing() {
-        setState(
-            state = State.IDLE,
-        )
-    }
-
-    fun startAdding() {
-        setState(
-            state = State.ADD,
-        )
-    }
-
     fun startSorting() {
         setState(
             state = State.SORT,
@@ -190,13 +178,6 @@ class ToDoListViewModel(
         )
 
         reloadAllTasks()
-    }
-
-    fun startEditingItem(listItem: ListElement) {
-        setState(
-            edit = listItem,
-            state = State.EDIT,
-        )
     }
 
     private fun setState(
