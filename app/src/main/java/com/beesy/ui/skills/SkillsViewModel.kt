@@ -61,6 +61,7 @@ class SkillsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             taskRepository.addSkill(SkillDto(title = title))
             loadAllSkills()
+            stopAdding()
         }
     }
 }
