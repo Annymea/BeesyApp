@@ -74,11 +74,7 @@ fun ItemDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 TextField(
-                    shape =
-                        RoundedCornerShape(
-                            topStart = 8.dp,
-                            bottomStart = 8.dp,
-                        ),
+                    shape = RoundedCornerShape(8.dp),
                     colors =
                         TextFieldDefaults.colors(
                             focusedIndicatorColor = Color.Transparent,
@@ -86,22 +82,16 @@ fun ItemDialog(
                             disabledIndicatorColor = Color.Transparent,
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         ),
-                    modifier =
-                        Modifier
-                            .focusRequester(focusRequester),
+                    modifier = Modifier.focusRequester(focusRequester),
                     value = value,
                     onValueChange = { value = it },
                     singleLine = true,
-                    placeholder = {
-                        Text(text = stringResource(R.string.new_task))
-                    },
-                    keyboardOptions =
-                        KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions =
-                        KeyboardActions(
-                            onDone = { onSave(value.text) },
-                        ),
+                    placeholder = { Text(text = stringResource(R.string.new_task)) },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { onSave(value.text) }),
                 )
 
                 Row(
