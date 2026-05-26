@@ -56,9 +56,8 @@ fun SkillsScreen(
             ShowAllSkills(
                 isAdding = uiState.adding,
                 skills = uiState.shownSkills,
-                addSkill = {
-                    skillViewModel.addSkill(it)
-                },
+                onAddSkill = { skillViewModel.addSkill(it) },
+                onDeleteSkill = { skillViewModel.deleteSkill(it) },
             )
         }
     }
@@ -66,7 +65,8 @@ fun SkillsScreen(
 
 @Composable
 fun ShowAllSkills(
-    addSkill: (String) -> (Unit),
+    onDeleteSkill: (SkillListElement) -> (Unit),
+    onAddSkill: (String) -> (Unit),
     isAdding: Boolean,
     skills: List<SkillListElement>,
     modifier: Modifier = Modifier,
@@ -87,11 +87,14 @@ fun ShowAllSkills(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(skills) { item ->
-            SkillListElement(skill = item)
+            SkillListElement(
+                onDeleteSkill = { onDeleteSkill(it) },
+                skill = item,
+            )
         }
         if (isAdding) {
             item {
-                AddSkillInput(onAddSkill = { addSkill(it) })
+                AddSkillInput(onAddSkill = { onAddSkill(it) })
             }
         }
         if (!isAdding) {

@@ -64,4 +64,18 @@ class SkillsViewModel(
             stopAdding()
         }
     }
+
+    fun deleteSkill(skill: SkillListElement) {
+        viewModelScope.launch(Dispatchers.IO) {
+            taskRepository.deleteSkill(
+                SkillDto(
+                    title = skill.title,
+                    id = skill.id,
+                    experience = skill.experience,
+                    level = skill.level,
+                ),
+            )
+            loadAllSkills()
+        }
+    }
 }

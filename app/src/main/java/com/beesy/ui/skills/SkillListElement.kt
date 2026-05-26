@@ -33,6 +33,7 @@ import com.beesy.ui.theme.MyApplicationTheme
 
 @Composable
 fun SkillListElement(
+    onDeleteSkill: (SkillListElement) -> (Unit),
     skill: SkillListElement,
     modifier: Modifier = Modifier,
 ) {
@@ -104,6 +105,7 @@ fun SkillListElement(
                             )
                         },
                         onClick = {
+                            onDeleteSkill(skill)
                             expanded = false
                         },
                     )
@@ -126,6 +128,7 @@ fun SkillListElement(
 fun PrevSkillElement() {
     MyApplicationTheme {
         SkillListElement(
+            onDeleteSkill = {},
             SkillListElement(
                 id = 1,
                 title = "TestSkill",
