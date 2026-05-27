@@ -58,14 +58,21 @@ fun SkillsScreen(
                 skills = uiState.shownSkills,
                 onAddSkill = { skillViewModel.addSkill(it) },
                 onDeleteSkill = { skillViewModel.deleteSkill(it) },
-            )
+                onFinishEditClicked = ,
+                onCancelEditClicked = TODO(),
+                onStartEditSkill = TODO(),
+                editedItem = TODO(),
         }
     }
 }
 
 @Composable
 fun ShowAllSkills(
+    onFinishEditClicked: (SkillListElement, String) -> Unit,
+    onCancelEditClicked: () -> Unit,
+    onStartEditSkill: (SkillListElement) -> (Unit),
     onDeleteSkill: (SkillListElement) -> (Unit),
+    editedItem: SkillListElement?,
     onAddSkill: (String) -> (Unit),
     isAdding: Boolean,
     skills: List<SkillListElement>,
@@ -90,6 +97,10 @@ fun ShowAllSkills(
             SkillListElement(
                 onDeleteSkill = { onDeleteSkill(it) },
                 skill = item,
+                edit = (editedItem != null && editedItem.id == item.id),
+                onFinishEditClicked = { element, name -> onFinishEditClicked(element, name) },
+                onCancelEditClicked = { onCancelEditClicked() },
+                onStartEditSkill = { onStartEditSkill(it) },
             )
         }
         if (isAdding) {
