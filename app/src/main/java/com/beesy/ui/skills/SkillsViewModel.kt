@@ -27,6 +27,7 @@ class SkillsViewModel(
             val allSkills = taskRepository.getAllSkills()
             _uiState.update { currentState ->
                 currentState.copy(
+                    skillsState = SkillListState.IDLE,
                     shownSkills =
                         allSkills.map {
                             SkillListElement(
@@ -41,10 +42,51 @@ class SkillsViewModel(
         }
     }
 
+    fun editSkill(
+        skill: SkillListElement,
+        newName: String,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            taskRepository.updateSkill(
+                SkillDto(
+                    title = newName,
+                    id = skill.id,
+                    level = skill.level,
+                    experience = skill.experience,
+                ),
+            )
+            loadAllSkills()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    skillsState = SkillListState.IDLE,
+                    editedElement = null,
+                )
+            }
+        }
+    }
+
+    fun startEditSkill(skill: SkillListElement) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                skillsState = SkillListState.EDIT,
+                editedElement = skill,
+            )
+        }
+    }
+
+    fun cancelEditing() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                skillsState = SkillListState.IDLE,
+                editedElement = null,
+            )
+        }
+    }
+
     fun stopAdding() {
         _uiState.update { currentState ->
             currentState.copy(
-                adding = false,
+                skillsState = SkillListState.IDLE,
             )
         }
     }
@@ -52,7 +94,8 @@ class SkillsViewModel(
     fun startAdding() {
         _uiState.update { currentState ->
             currentState.copy(
-                adding = true,
+                skillsState = SkillListState.ADD,
+                editedElement = null,
             )
         }
     }

@@ -43,7 +43,9 @@ fun SkillsScreen(
         bottomBar = { navigationBar() },
         topBar = { SkillAppBar() },
         floatingActionButton = {
-            if (!uiState.adding) AddSkillFAB(startAdding = { skillViewModel.startAdding() })
+            if (uiState.skillsState != SkillListState.ADD) {
+                AddSkillFAB(startAdding = { skillViewModel.startAdding() })
+            }
         },
     ) { innerPadding ->
         Box(
@@ -54,14 +56,15 @@ fun SkillsScreen(
                     .imePadding(),
         ) {
             ShowAllSkills(
-                isAdding = uiState.adding,
+                isAdding = uiState.skillsState == SkillListState.ADD,
                 skills = uiState.shownSkills,
                 onAddSkill = { skillViewModel.addSkill(it) },
                 onDeleteSkill = { skillViewModel.deleteSkill(it) },
-                onFinishEditClicked = ,
-                onCancelEditClicked = TODO(),
-                onStartEditSkill = TODO(),
-                editedItem = TODO(),
+                onFinishEditClicked = { skill, name -> skillViewModel.editSkill(skill, name) },
+                onCancelEditClicked = { skillViewModel.cancelEditing() },
+                onStartEditSkill = { skillViewModel.startEditSkill(it) },
+                editedItem = uiState.editedElement,
+            )
         }
     }
 }

@@ -7,8 +7,14 @@ data class SkillListElement(
     val level: Int,
 )
 
+enum class SkillListState {
+    IDLE,
+    ADD,
+    EDIT,
+}
+
 data class SkillsUiState(
+    val skillsState: SkillListState = SkillListState.IDLE,
     val shownSkills: List<SkillListElement> = listOf(),
-    val adding: Boolean = false,
     val editedElement: SkillListElement? = null,
 )

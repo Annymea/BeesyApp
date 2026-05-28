@@ -35,7 +35,7 @@ fun AppBar(
     onCancelSorting: () -> Unit,
     onReorderClicked: () -> Unit,
     onDeleteAllCheckedClicked: () -> Unit,
-    state: State,
+    taskState: TaskState,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -51,7 +51,7 @@ fun AppBar(
             )
         },
         actions = {
-            if (state == State.SORT) {
+            if (taskState == TaskState.SORT) {
                 ButtonsForEndSorting(
                     onSaveSorting = { onSaveSorting() },
                     onCancelSorting = { onCancelSorting() },
@@ -165,7 +165,7 @@ fun TopBarPreviewNoEdit() {
             onCancelSorting = { },
             onReorderClicked = { },
             onDeleteAllCheckedClicked = {},
-            state = State.IDLE,
+            taskState = TaskState.IDLE,
         )
     }
 }
@@ -179,7 +179,7 @@ fun TopBarPreviewEdit() {
             onSaveSorting = { },
             onCancelSorting = { },
             onReorderClicked = { },
-            state = State.SORT,
+            taskState = TaskState.SORT,
         )
     }
 }
