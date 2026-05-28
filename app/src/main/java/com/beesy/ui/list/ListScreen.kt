@@ -48,7 +48,7 @@ fun ToDoScreen(
                         listViewModel.finishSorting(false)
                     }
                 },
-                state = uiState.state,
+                taskState = uiState.taskState,
                 onDeleteAllCheckedClicked = {
                     composableScope.launch(Dispatchers.IO) {
                         listViewModel.deleteAllCheckedItems()
@@ -58,7 +58,7 @@ fun ToDoScreen(
         },
         floatingActionButton =
             {
-                if (uiState.state != State.ADD && uiState.state != State.SORT) {
+                if (uiState.taskState != TaskState.ADD && uiState.taskState != TaskState.SORT) {
                     AddItem(
                         modifier = Modifier.size(52.dp),
                         onAddItem = {
@@ -77,7 +77,7 @@ fun ToDoScreen(
                     .consumeWindowInsets(innerPadding)
                     .imePadding(),
         ) {
-            if (uiState.state != State.SORT) {
+            if (uiState.taskState != TaskState.SORT) {
                 ShowList(
                     modifier = Modifier.weight(1f),
                     list = uiState.shownList,
@@ -98,7 +98,7 @@ fun ToDoScreen(
                     },
                 )
             }
-            if (uiState.state == State.SORT) {
+            if (uiState.taskState == TaskState.SORT) {
                 ReorderList(
                     onSortElementUp = { listViewModel.sortElementUp(it) },
                     onSortElementDown = { listViewModel.sortElementDown(it) },

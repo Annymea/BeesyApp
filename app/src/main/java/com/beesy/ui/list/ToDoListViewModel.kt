@@ -21,7 +21,7 @@ class ToDoListViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             reloadAllTasks()
             setState(
-                state = State.IDLE,
+                taskState = TaskState.IDLE,
             )
         }
     }
@@ -118,13 +118,13 @@ class ToDoListViewModel(
         )
         reloadAllTasks()
         setState(
-            state = State.IDLE,
+            taskState = TaskState.IDLE,
         )
     }
 
     fun startSorting() {
         setState(
-            state = State.SORT,
+            taskState = TaskState.SORT,
         )
     }
 
@@ -143,7 +143,7 @@ class ToDoListViewModel(
         }
 
         setState(
-            state = State.IDLE,
+            taskState = TaskState.IDLE,
         )
         reloadAllTasks()
     }
@@ -165,7 +165,7 @@ class ToDoListViewModel(
         newName: String,
     ) {
         setState(
-            state = State.IDLE,
+            taskState = TaskState.IDLE,
         )
 
         updateTask(
@@ -182,12 +182,12 @@ class ToDoListViewModel(
 
     private fun setState(
         edit: ListElement? = null,
-        state: State,
+        taskState: TaskState,
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 editItem = edit,
-                state = state,
+                taskState = taskState,
             )
         }
     }
