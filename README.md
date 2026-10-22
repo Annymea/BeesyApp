@@ -1,7 +1,6 @@
 # Skill-Based To-Do App - Beesy
 
 <img width="320" height="609" alt="Beesy" src="https://github.com/user-attachments/assets/6b240e10-f201-4012-ab07-faf57f29b9df" />
-<img width="306" height="562" alt="ScreenShotBeesy" src="https://github.com/user-attachments/assets/fff4943c-4712-4615-85bf-b9e56022afbf" />
 
 ## Status of the project
 
