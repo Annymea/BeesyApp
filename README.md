@@ -1,5 +1,8 @@
 # Skill-Based To-Do App - Beesy
 
+<img width="320" height="609" alt="Beesy" src="https://github.com/user-attachments/assets/6b240e10-f201-4012-ab07-faf57f29b9df" />
+<img width="306" height="562" alt="ScreenShotBeesy" src="https://github.com/user-attachments/assets/fff4943c-4712-4615-85bf-b9e56022afbf" />
+
 ## Status of the project
 
 On pause
@@ -14,6 +17,9 @@ That's why I wanted to create a skill-based task tracker that gamifies my everyd
 
 ## What does the app do?
 
+<img width="317" height="560" alt="Screenshot2Beesy" src="https://github.com/user-attachments/assets/6673656c-c7df-4229-909a-38f8a1744e32" />
+<img width="306" height="562" alt="ScreenShotBeesy" src="https://github.com/user-attachments/assets/fa4442a6-e86e-4976-a9e0-b4129fa33c21" />
+
 At the moment, you can only add, sort, and delete tasks. However, my vision for the app goes far beyond that.
 
 I started implementing a skill system. The idea was to let users create skills, such as "Programming", and assign tasks to them.
@@ -25,6 +31,8 @@ This was the main concept at the current stage of development.
 In the future, I also wanted to implement projects and recurring tasks to help me better organize my everyday life and all the different projects I'm working on.
 
 ## Challenges
+
+<img width="718" height="542" alt="ScreenshotBeesyEntwurf" src="https://github.com/user-attachments/assets/4a993968-6856-4329-8747-bed9de4aeda6" />
 
 I had already worked on a Kotlin app before, so I was somewhat familiar with the language and how to structure an app.
 
