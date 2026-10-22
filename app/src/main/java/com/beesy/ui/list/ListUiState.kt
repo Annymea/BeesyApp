@@ -4,6 +4,7 @@ data class ListElement(
     val checked: Boolean,
     val title: String,
     val id: Int,
+    val skills: List<String>,
 )
 
 enum class TaskState {

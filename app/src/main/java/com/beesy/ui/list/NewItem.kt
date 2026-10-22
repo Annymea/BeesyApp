@@ -41,6 +41,7 @@ fun AddItem(
                 onDismiss = {
                     openAddDialog.value = false
                 },
+                getAllSkills = { -> emptyList()}
             )
         }
     }

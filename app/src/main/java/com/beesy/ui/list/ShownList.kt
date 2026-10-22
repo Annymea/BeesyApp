@@ -84,7 +84,7 @@ fun TaskListElement(
     when {
         openEditDialog.value -> {
             ItemDialog(
-                task = listElement.title,
+                task = listElement,
                 title = stringResource(R.string.edit_task),
                 onSave = {
                     onFinishEditClicked(listElement, it)
@@ -93,6 +93,7 @@ fun TaskListElement(
                 onDismiss = {
                     openEditDialog.value = false
                 },
+                getAllSkills = { emptyList() },
             )
         }
     }
@@ -184,7 +185,7 @@ fun ElementPreview2() {
             onCheckboxClicked = { },
             onDeleteClicked = { },
             onFinishEditClicked = { _, _ -> },
-            listElement = ListElement(id = 1, title = "Test", checked = true),
+            listElement = ListElement(id = 1, title = "Test", checked = true, skills = emptyList()),
         )
     }
 }
@@ -197,7 +198,7 @@ fun EditedElementPreview2() {
             onCheckboxClicked = { },
             onDeleteClicked = { },
             onFinishEditClicked = { _, _ -> },
-            listElement = ListElement(id = 1, title = "Test", checked = true),
+            listElement = ListElement(id = 1, title = "Test", checked = true, skills = emptyList()),
         )
     }
 }

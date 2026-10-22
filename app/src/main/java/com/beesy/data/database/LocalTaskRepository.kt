@@ -15,7 +15,10 @@ class LocalTaskRepository(
         taskDAO.insertTask(task.copy(order = maxPosition + 1).toEntity())
     }
 
-    override suspend fun getAllTasks(): List<TaskDto> = taskDAO.getAllTasks().map { it.toDto() }
+    override suspend fun getAllTasks(): List<TaskDto> {
+        taskDAO.getAllTasks().map { it.toDto() }
+        return TODO("Provide the return value")
+    }
 
     override suspend fun updateItem(task: TaskDto) {
         taskDAO.updateTask(task.toEntity())

@@ -41,11 +41,12 @@ fun ItemDialog(
     title: String,
     onDismiss: () -> (Unit),
     onSave: (String) -> (Unit),
-    task: String = "",
+    getAllSkills: () -> (List<String>),
+    task: ListElement = ListElement(title = "", checked = false, id = 0, skills = listOf()),
 ) {
     var value by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(
-            TextFieldValue(task, TextRange(task.length)),
+            TextFieldValue(task.title, TextRange(task.title.length)),
         )
     }
 
@@ -143,6 +144,7 @@ fun PrevAddDialog() {
             onDismiss = {},
             onSave = {},
             title = stringResource(R.string.add_new_task),
+            getAllSkills = { listOf("Malen", "Zeichnen", "Sport") },
         )
     }
 }
@@ -155,6 +157,7 @@ fun PrevEditDialog() {
             onDismiss = {},
             onSave = {},
             title = "Edit task",
+            getAllSkills = { listOf("Malen", "Zeichnen", "Sport") },
         )
     }
 }

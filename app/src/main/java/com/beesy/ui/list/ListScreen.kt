@@ -125,7 +125,7 @@ fun ElementPreview() {
             onCheckboxClicked = { },
             onDeleteClicked = { },
             onFinishEditClicked = { _, _ -> },
-            listElement = ListElement(id = 1, title = "Test", checked = true),
+            listElement = ListElement(id = 1, title = "Test", checked = true, skills = listOf()),
         )
     }
 }
@@ -138,7 +138,7 @@ fun EditedElementPreview() {
             onCheckboxClicked = { },
             onDeleteClicked = { },
             onFinishEditClicked = { _, _ -> },
-            listElement = ListElement(id = 1, title = "Test", checked = true),
+            listElement = ListElement(id = 1, title = "Test", checked = true, skills = listOf()),
         )
     }
 }
@@ -148,7 +148,7 @@ fun EditedElementPreview() {
 fun ReorderElementPreview() {
     MyApplicationTheme {
         ReorderListElement(
-            element = ListElement(id = 1, title = "Test", checked = true),
+            element = ListElement(id = 1, title = "Test", checked = true, skills = listOf()),
             onSortUpClicked = {},
             onSortDownClicked = {},
         )

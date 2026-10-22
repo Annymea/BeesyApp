@@ -36,6 +36,7 @@ class ToDoListViewModel(
                             id = it.id,
                             title = it.title,
                             checked = it.checked,
+                            skills = emptyList(),
                         )
                     },
             )
